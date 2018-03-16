@@ -1,0 +1,79 @@
+{% load tags %}
+<div class="container" style="margin-top: 3%; margin-bottom: 3%">
+    {% if add_success %}
+      <div class="alert alert-success">
+          {{ add_success }}
+      </div>
+    {% endif %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    {{ error|escape }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ error|escape }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <form method="POST" action="{% url 'add_member' %}">
+        {% csrf_token %}
+      <div class="row">
+          <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <label for="first_name">{{ form.first_name.label }}</label>
+            {{ form.first_name | add_css:"form-control" }}
+          </div>
+          <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <label for="last_name">{{ form.last_name.label }}</label>
+            {{ form.last_name | add_css:"form-control" }}
+          </div>
+      </div>
+      <div class="row">
+          <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <label for="mobile_number">{{ form.mobile_number.label }}</label>
+            {{ form.mobile_number | add_css:"form-control" }}
+          </div>
+          <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <label for="email">{{ form.email.label }}</label>
+            {{ form.email | add_css:"form-control" }}
+          </div>
+      </div>
+      <div class="form-group">
+        <label for="address">{{ form.address.label }}</label>
+        {{ form.address | add_css:"form-control" }}
+      </div>
+      <div class="row">
+          <div class="form-group col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label for="subscription_type">{{ form.subscription_type.label }}</label>
+            {{ form.subscription_type | add_css:"form-control" }}
+          </div>
+          <div class="form-group col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label for="subscription_period">{{ form.subscription_period.label }}</label>
+            {{ form.subscription_period | add_css:"form-control" }}
+          </div>
+          <div class="form-group col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label for="amount">{{ form.amount.label }}</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">₹</span>
+                </div>
+                {{ form.amount | add_css:"form-control" }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label for="registration_date">{{ form.registration_date.label }}</label>
+            {{ form.registration_date | add_css:"form-control" }}
+          </div>
+          <div class="form-group col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label for="registration_upto">{{ form.registration_upto.label }}</label>
+            {{ form.registration_upto | add_css:"form-control" }}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Member</button>
+    </form>
+</div>

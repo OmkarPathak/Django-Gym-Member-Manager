@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load tags %}
+
+{% block content %}
+    <h2>Updating Record for: {{ user.first_name }} {{ user.last_name }}</h2>
+    <hr>
+    {% if updated %}
+    <div class="alert alert-success">
+        {{ updated }}
+    </div>
+    {% endif %}
+    <form method="POST" action="{% url 'update_member' user.member_id %}" style="margin-top: 2%">
+        {% csrf_token %}
+        <div class="row">
+            <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <label for="subscription_type">{{ form.subscription_type.label }}</label>
+              {{ form.subscription_type | add_css:"form-control" }}
+            </div>
+            <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <label for="subscription_period">{{ form.subscription_period.label }}</label>
+              {{ form.subscription_period | add_css:"form-control" }}
+            </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <label for="registration_date">{{ form.registration_date.label }}</label>
+            {{ form.registration_date | add_css:"form-control" }}
+          </div>
+          <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <label for="registration_upto">{{ form.registration_upto.label }}</label>
+            {{ form.registration_upto | add_css:"form-control" }}
+          </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <label for="amount">{{ form.amount.label }}</label>
+            {{ form.amount | add_css:"form-control" }}
+          </div>
+        </div>
+        <input type="submit" class="btn btn-primary" value="Update" />
+    </form>
+{% endblock %}
