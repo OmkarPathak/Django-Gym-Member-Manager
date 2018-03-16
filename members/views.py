@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.core import serializers
 from .models import AddMemberForm, Member, SearchForm, UpdateMemberForm
 import datetime
+import dateutil.relativedelta as delta
+import dateutil.parser as parser
 
 # Create your views here.
 def members(request):
@@ -23,9 +25,11 @@ def add_member(request):
     subs_end_today_count = Member.objects.filter(registration_upto=datetime.datetime.now()).count()
     search_form = SearchForm()
     if request.method == 'POST':
-        form = AddMemberForm(request.POST)
+        form = AddMemberForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            temp = form.save(commit=False)
+            temp.registration_upto = parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+            temp.save()
             form = AddMemberForm()
         context = {
             'add_success': 'Successfully Added Member',
@@ -77,9 +81,8 @@ def update_member(request, id):
     if request.method == 'POST':
         object = Member.objects.get(pk=id)
         object.registration_date =  request.POST.get('registration_date')
-        object.registration_upto =  request.POST.get('registration_upto')
+        object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
         object.subscription_type =  request.POST.get('subscription_type')
-        object.subscription_period =  request.POST.get('subscription_period')
         object.amount =  request.POST.get('amount')
         object.save()
         user = Member.objects.get(pk=id)

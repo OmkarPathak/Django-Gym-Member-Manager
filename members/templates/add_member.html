@@ -19,7 +19,7 @@
             </div>
         {% endfor %}
     {% endif %}
-    <form method="POST" action="{% url 'add_member' %}">
+    <form method="POST" action="{% url 'add_member' %}" enctype="multipart/form-data">
         {% csrf_token %}
       <div class="row">
           <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -70,8 +70,8 @@
             {{ form.registration_date | add_css:"form-control" }}
           </div>
           <div class="form-group col-lg-4 col-md-4 col-sm-12 col-xs-12">
-            <label for="registration_upto">{{ form.registration_upto.label }}</label>
-            {{ form.registration_upto | add_css:"form-control" }}
+            <label for="photo">{{ form.photo.label }}</label>
+            {{ form.photo | add_css:"form-control" }}
           </div>
         </div>
         <button type="submit" class="btn btn-primary">Add Member</button>
