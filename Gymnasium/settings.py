@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'accounts',
     'members',
     'notifications',
+    'reports',
 ]
 
 MIDDLEWARE = [

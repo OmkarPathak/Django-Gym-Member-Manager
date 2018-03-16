@@ -21,23 +21,22 @@ def members(request):
 def add_member(request):
     view_all = Member.objects.all()
     subs_end_today_count = Member.objects.filter(registration_upto=datetime.datetime.now()).count()
+    search_form = SearchForm()
     if request.method == 'POST':
         form = AddMemberForm(request.POST)
         if form.is_valid():
             form.save()
             form = AddMemberForm()
-            search_form = SearchForm()
-            context = {
-                'add_success': 'Successfully Added Member',
-                'form': form,
-                'view_all': view_all,
-                'search_form': search_form,
-                'subs_end_today_count': subs_end_today_count,
-            }
-            return render(request, 'tab_base.html', context)
+        context = {
+            'add_success': 'Successfully Added Member',
+            'form': form,
+            'view_all': view_all,
+            'search_form': search_form,
+            'subs_end_today_count': subs_end_today_count,
+        }
+        return render(request, 'tab_base.html', context)
     else:
         form = AddMemberForm()
-        search_form = SearchForm()
         context = {
             'form': form,
             'view_all': view_all,
