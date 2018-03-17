@@ -5,6 +5,7 @@ from .models import AddMemberForm, Member, SearchForm, UpdateMemberForm
 import datetime
 import dateutil.relativedelta as delta
 import dateutil.parser as parser
+from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
 def members(request):
@@ -80,10 +81,19 @@ def delete_member(request, id):
 def update_member(request, id):
     if request.method == 'POST':
         object = Member.objects.get(pk=id)
+        object.first_name = request.POST.get('first_name')
+        object.last_name = request.POST.get('last_name')
         object.registration_date =  request.POST.get('registration_date')
         object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
         object.subscription_type =  request.POST.get('subscription_type')
         object.amount =  request.POST.get('amount')
+
+        # for updating photo
+        if 'photo' in request.FILES:
+            myfile = request.FILES['photo']
+            fs = FileSystemStorage(base_url="")
+            photo = fs.save(myfile.name, myfile)
+            object.photo = fs.url(photo)
         object.save()
         user = Member.objects.get(pk=id)
         subs_end_today_count = Member.objects.filter(registration_upto=datetime.datetime.now()).count()
@@ -92,7 +102,9 @@ def update_member(request, id):
                                 'registration_upto': user.registration_upto,
                                 'subscription_type': user.subscription_type,
                                 'subscription_period': user.subscription_period,
-                                'amount': user.amount
+                                'amount': user.amount,
+                                'first_name': user.first_name,
+                                'last_name': user.last_name,
                                 })
         return render(request,
             'update.html',
@@ -110,7 +122,9 @@ def update_member(request, id):
                                 'registration_upto': user.registration_upto,
                                 'subscription_type': user.subscription_type,
                                 'subscription_period': user.subscription_period,
-                                'amount': user.amount
+                                'amount': user.amount,
+                                'first_name': user.first_name,
+                                'last_name': user.last_name,
                                 })
     return render(request,
                     'update.html',

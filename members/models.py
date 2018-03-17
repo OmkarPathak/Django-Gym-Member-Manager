@@ -29,7 +29,7 @@ class Member(models.Model):
 	subscription_type  = models.CharField(max_length=30, choices=SUBSCRIPTION_TYPE_CHOICES)
 	subscription_period = models.CharField(max_length=30, choices=SUBSCRIPTION_PERIOD_CHOICES)
 	amount = models.IntegerField()
-	photo = models.FileField(upload_to='photos/')
+	photo = models.FileField(upload_to='photos/', blank=True)
 
 	def __str__(self):
 		return self.first_name + ' ' + self.last_name
@@ -57,8 +57,11 @@ class SearchForm(forms.Form):
 		search = forms.CharField(label='Search Member', max_length=100)
 
 class UpdateMemberForm(forms.Form):
+	first_name = forms.CharField(max_length=50)
+	last_name = forms.CharField(max_length=50)
 	registration_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 	registration_upto = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 	subscription_type  = forms.ChoiceField(choices=SUBSCRIPTION_TYPE_CHOICES)
 	subscription_period = forms.ChoiceField(choices=SUBSCRIPTION_PERIOD_CHOICES)
 	amount = forms.IntegerField()
+	photo = forms.FileField(label='Update Photo', required=False)
