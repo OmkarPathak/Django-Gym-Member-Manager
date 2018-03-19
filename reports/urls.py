@@ -17,6 +17,7 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('export/all/', views.export_all, name='export_all'),
     path('', views.reports, name='reports'),
+    path('export/all/', views.export_all, name='export_all'),
+    # path('', views.reports, name='reports'),
 ]
