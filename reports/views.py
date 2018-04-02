@@ -19,6 +19,9 @@ def export_all(request):
     return response
 
 def reports(request):
+    subs_end_today_count = Member.objects.filter(
+                                                registration_upto=datetime.datetime.now(),
+                                                notification=1).count()
     if request.method == 'POST':
         form = GenerateReportForm(request.POST)
         if form.is_valid():
@@ -31,16 +34,17 @@ def reports(request):
                 users = Member.objects.filter(admitted_on__month=request.POST.get('month'))
             else:
                 users = Member.objects.filter(admitted_on__year=request.POST.get('year'))
-            aggregate_amount = 0
-            for member in users:
-                aggregate_amount += member.amount
+            # aggregate_amount = 0
+            # for member in users:
+            #     aggregate_amount += member.amount
             context = {
                 'users': users,
                 'form': form,
-                'aggregate_amount': aggregate_amount,
+                # 'aggregate_amount': aggregate_amount,
                 'students_registered': len(users),
+                'subs_end_today_count': subs_end_today_count,
             }
             return render(request, 'reports.html', context)
     else:
         form = GenerateReportForm()
-    return render(request, 'reports.html', {'form': form})
+    return render(request, 'reports.html', {'form': form, 'subs_end_today_count': subs_end_today_count,})

@@ -9,7 +9,9 @@ from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
 def members(request):
-    subs_end_today_count = Member.objects.filter(registration_upto=datetime.datetime.now()).count()
+    subs_end_today_count = Member.objects.filter(
+                                                registration_upto=datetime.datetime.now(),
+                                                notification=1).count()
     view_all = Member.objects.all()
     form = AddMemberForm()
     search_form = SearchForm()
@@ -23,7 +25,9 @@ def members(request):
 
 def add_member(request):
     view_all = Member.objects.all()
-    subs_end_today_count = Member.objects.filter(registration_upto=datetime.datetime.now()).count()
+    subs_end_today_count = Member.objects.filter(
+                                            registration_upto=datetime.datetime.now(),
+                                            notification=1).count()
     search_form = SearchForm()
     if request.method == 'POST':
         form = AddMemberForm(request.POST, request.FILES)
@@ -64,7 +68,9 @@ def search_member(request):
     return render(request, 'tab_base.html', {'search_form': search_form})
 
 def delete_member(request, id):
-    subs_end_today_count = Member.objects.filter(registration_upto=datetime.datetime.now()).count()
+    subs_end_today_count = Member.objects.filter(
+                                                registration_upto=datetime.datetime.now(),
+                                                notification=1).count()
     Member.objects.filter(pk=id).delete()
     view_all = Member.objects.all()
     form = AddMemberForm()
@@ -87,6 +93,7 @@ def update_member(request, id):
         object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
         object.subscription_type =  request.POST.get('subscription_type')
         object.amount =  request.POST.get('amount')
+        object.notification =  2
 
         # for updating photo
         if 'photo' in request.FILES:
@@ -96,7 +103,9 @@ def update_member(request, id):
             object.photo = fs.url(photo)
         object.save()
         user = Member.objects.get(pk=id)
-        subs_end_today_count = Member.objects.filter(registration_upto=datetime.datetime.now()).count()
+        subs_end_today_count = Member.objects.filter(
+                                                    registration_upto=datetime.datetime.now(),
+                                                    notification=1).count()
         form = UpdateMemberForm(initial={
                                 'registration_date': user.registration_date,
                                 'registration_upto': user.registration_upto,
@@ -116,7 +125,9 @@ def update_member(request, id):
             })
     else:
         user = Member.objects.get(pk=id)
-        subs_end_today_count = Member.objects.filter(registration_upto=datetime.datetime.now()).count()
+        subs_end_today_count = Member.objects.filter(
+                                                registration_upto=datetime.datetime.now(),
+                                                notification=1).count()
         form = UpdateMemberForm(initial={
                                 'registration_date': user.registration_date,
                                 'registration_upto': user.registration_upto,

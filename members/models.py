@@ -22,7 +22,7 @@ class Member(models.Model):
 	last_name = models.CharField(max_length=50)
 	mobile_number = models.IntegerField(unique=True)
 	email = models.EmailField(null=True, blank=True)
-	address = models.CharField(max_length=300)
+	address = models.CharField(max_length=300, blank=True)
 	admitted_on = models.DateField(auto_now_add=True)
 	registration_date = models.DateField()
 	registration_upto = models.DateField()
@@ -30,6 +30,7 @@ class Member(models.Model):
 	subscription_period = models.CharField(max_length=30, choices=SUBSCRIPTION_PERIOD_CHOICES)
 	amount = models.IntegerField()
 	photo = models.FileField(upload_to='photos/', blank=True)
+	notification = models.IntegerField(default=2, blank=True)
 
 	def __str__(self):
 		return self.first_name + ' ' + self.last_name
