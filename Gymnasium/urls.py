@@ -20,10 +20,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('members/', include('members.urls')),
     path('notifications/', include('notifications.urls')),
-    path('reports/', include('reports.urls'))
+    path('reports/', include('reports.urls')),
+    path('', include('accounts.urls'))
 ]
 
 # for handling profile photos

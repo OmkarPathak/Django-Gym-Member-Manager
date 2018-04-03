@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load tags %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block content %}
+  <div class="col-lg-6 col-md-6 offset-lg-3 offset-md-3 col-sm-12 col-xs-12">
+      <h2>Login</h2>
+      <form method="post" class="form" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="row">
+            <div class="form-group col">
+              <label for="username">{{ form.username.label }}</label>
+                {{ form.username | add_css:"form-control" }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col">
+              <label for="password">{{ form.password.label }}</label>
+                {{ form.password | add_css:"form-control" }}
+            </div>
+          </div>
+        <button class="btn btn-default" type="submit">Login</button>
+      </form>
+  </div>
+{% endblock %}

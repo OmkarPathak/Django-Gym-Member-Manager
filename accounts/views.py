@@ -7,6 +7,10 @@ def current_datetime(request):
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
 
-def login(request):
-    context = {'Name': 'Omkar Pathak'}
-    return render(request, 'login.html', context)
+# def login(request):
+#     context = {'Name': 'Omkar Pathak'}
+#     return render(request, 'login.html', context)
+
+def homepage(request):
+    # context = {'Name': 'Omkar Pathak'}
+    return render(request, 'homepage.html')

@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# After succesful login go to path:
+LOGIN_REDIRECT_URL = '/members/'
+# After Logout
+LOGOUT_REDIRECT_URL = '/'
 
 # Application definition
 
