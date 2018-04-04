@@ -12,12 +12,16 @@ def members(request):
     subs_end_today_count = Member.objects.filter(
                                                 registration_upto=datetime.datetime.now(),
                                                 notification=1).count()
+    evening = Member.objects.filter(batch='evening')
+    morning = Member.objects.filter(batch='morning')
     view_all = Member.objects.all()
     form = AddMemberForm()
     search_form = SearchForm()
     context = {
         'form': form,
         'view_all': view_all,
+        'morning': morning,
+        'evening': evening,
         'search_form': search_form,
         'subs_end_today_count': subs_end_today_count,
     }
@@ -92,6 +96,7 @@ def update_member(request, id):
         object.registration_date =  request.POST.get('registration_date')
         object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
         object.subscription_type =  request.POST.get('subscription_type')
+        object.fee_status = request.POST.get('fee_status')
         object.amount =  request.POST.get('amount')
         object.notification =  2
 
@@ -112,6 +117,7 @@ def update_member(request, id):
                                 'subscription_type': user.subscription_type,
                                 'subscription_period': user.subscription_period,
                                 'amount': user.amount,
+                                'fee_status': user.fee_status,
                                 'first_name': user.first_name,
                                 'last_name': user.last_name,
                                 })
@@ -134,6 +140,7 @@ def update_member(request, id):
                                 'subscription_type': user.subscription_type,
                                 'subscription_period': user.subscription_period,
                                 'amount': user.amount,
+                                'fee_status': user.fee_status,
                                 'first_name': user.first_name,
                                 'last_name': user.last_name,
                                 })

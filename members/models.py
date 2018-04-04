@@ -16,6 +16,16 @@ SUBSCRIPTION_PERIOD_CHOICES = (
     ('12', '12 Months'),
 )
 
+FEE_STATUS = (
+	('paid', 'Paid'),
+	('pending', 'Pending'),
+)
+
+BATCH = (
+	('morning', 'Morning'),
+	('evening', 'Evening'),
+)
+
 class Member(models.Model):
 	member_id = models.AutoField(primary_key=True)
 	first_name = models.CharField(max_length=50)
@@ -26,9 +36,17 @@ class Member(models.Model):
 	admitted_on = models.DateField(auto_now_add=True)
 	registration_date = models.DateField()
 	registration_upto = models.DateField()
-	subscription_type  = models.CharField(max_length=30, choices=SUBSCRIPTION_TYPE_CHOICES)
-	subscription_period = models.CharField(max_length=30, choices=SUBSCRIPTION_PERIOD_CHOICES)
+	subscription_type  = models.CharField(
+									max_length=30,
+									choices=SUBSCRIPTION_TYPE_CHOICES,
+									default=SUBSCRIPTION_TYPE_CHOICES[0][0])
+	subscription_period = models.CharField(
+									max_length=30,
+									choices=SUBSCRIPTION_PERIOD_CHOICES,
+									default=SUBSCRIPTION_PERIOD_CHOICES[0][0])
 	amount = models.IntegerField()
+	fee_status = models.CharField(max_length=30, choices=FEE_STATUS, default=FEE_STATUS[0][0])
+	batch = models.CharField(max_length=30, choices=BATCH, default=BATCH[0][0])
 	photo = models.FileField(upload_to='photos/', blank=True)
 	notification = models.IntegerField(default=2, blank=True)
 
@@ -64,5 +82,6 @@ class UpdateMemberForm(forms.Form):
 	registration_upto = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 	subscription_type  = forms.ChoiceField(choices=SUBSCRIPTION_TYPE_CHOICES)
 	subscription_period = forms.ChoiceField(choices=SUBSCRIPTION_PERIOD_CHOICES)
+	fee_status = forms.ChoiceField(choices=FEE_STATUS)
 	amount = forms.IntegerField()
 	photo = forms.FileField(label='Update Photo', required=False)

@@ -57,6 +57,10 @@
               </div>
               <div class="row">
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <label for="photo">{{ form.fee_status.label }}</label>
+                  {{ form.fee_status | add_css:"form-control" }}
+                </div>
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <label for="photo">{{ form.photo.label }}</label>
                   {{ form.photo | add_css:"form-control" }}
                 </div>
