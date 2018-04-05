@@ -14,7 +14,7 @@ A simple gym member manager to keep a track of all payments and members
 
 - Easily add members
 
-![add-members](results/gym-member-manager-1.png)
+![add-members](results/gym-member-manager1.png)
 
 - Search and update the member information
 ![search-update-members](results/gym-member-manager2a.png)
@@ -25,3 +25,20 @@ A simple gym member manager to keep a track of all payments and members
 
 - Reports Generation
 ![reports](results/gym-member-manager4.png)
+
+## How to use
+
+- Download the zip
+- Extract the contents
+- Install all dependencies by executing the following command:
+
+    ```
+    $pip install -r requirements.txt
+    ```
+
+- For running the application simply execute the following commands:
+
+    ```
+    $python3 manage.py migrate
+    $python3 manage.py runserver
+    ```
