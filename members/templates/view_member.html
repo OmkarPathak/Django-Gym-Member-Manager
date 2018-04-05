@@ -20,6 +20,7 @@
               <th scope="col">Registration Date</th>
               <th scope="col">Registration Upto</th>
               <th scope="col">Subscription Type</th>
+              <th scope="col">Subscription Period</th>
               <th scope="col">Fees</th>
             </tr>
           </thead>
@@ -31,6 +32,7 @@
                 <td>{{ member.registration_date }}</td>
                 <td>{{ member.registration_upto }}</td>
                 <td>{{ member.get_subscription_type_display }}</td>
+                <td>{{ member.subscription_period }}</td>
                 <td>
                     {% if member.fee_status == 'paid' %}
                     <span class="icon-checkmark" style="color: green"></span>
@@ -55,6 +57,7 @@
               <th scope="col">Registration Date</th>
               <th scope="col">Registration Upto</th>
               <th scope="col">Subscription Type</th>
+              <th scope="col">Subscription Period</th>
               <th scope="col">Fees</th>
             </tr>
           </thead>
@@ -66,6 +69,7 @@
                 <td>{{ member.registration_date }}</td>
                 <td>{{ member.registration_upto }}</td>
                 <td>{{ member.get_subscription_type_display }}</td>
+                <td>{{ member.subscription_period }}</td>
                 <td>
                     {% if member.fee_status == 'paid' %}
                     <span class="icon-checkmark" style="color: green"></span>

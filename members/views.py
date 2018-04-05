@@ -6,20 +6,21 @@ import datetime
 import dateutil.relativedelta as delta
 import dateutil.parser as parser
 from django.core.files.storage import FileSystemStorage
+from payments.models import Payments
 
 # Create your views here.
 def members(request):
     subs_end_today_count = Member.objects.filter(
                                                 registration_upto=datetime.datetime.now(),
                                                 notification=1).count()
-    evening = Member.objects.filter(batch='evening')
-    morning = Member.objects.filter(batch='morning')
     view_all = Member.objects.all()
     form = AddMemberForm()
     search_form = SearchForm()
+    # get all members according to their batches
+    evening = Member.objects.filter(batch='evening')
+    morning = Member.objects.filter(batch='morning')
     context = {
         'form': form,
-        'view_all': view_all,
         'morning': morning,
         'evening': evening,
         'search_form': search_form,
@@ -33,26 +34,47 @@ def add_member(request):
                                             registration_upto=datetime.datetime.now(),
                                             notification=1).count()
     search_form = SearchForm()
+    success = 0
     if request.method == 'POST':
         form = AddMemberForm(request.POST, request.FILES)
         if form.is_valid():
             temp = form.save(commit=False)
             temp.registration_upto = parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
             temp.save()
+            success = 'Successfully Added Member'
+
+            # Add payments if payment is 'paid'
+            if temp.fee_status == 'paid':
+                payments = Payments(
+                                    user=temp,
+                                    payment_date=temp.registration_date,
+                                    payment_period=temp.subscription_period,
+                                    payment_amount=temp.amount)
+                payments.save()
+
             form = AddMemberForm()
+        # get all members according to their batches
+        evening = Member.objects.filter(batch='evening')
+        morning = Member.objects.filter(batch='morning')
+
         context = {
-            'add_success': 'Successfully Added Member',
+            'add_success': success,
             'form': form,
-            'view_all': view_all,
+            'morning': morning,
+            'evening': evening,
             'search_form': search_form,
             'subs_end_today_count': subs_end_today_count,
         }
         return render(request, 'tab_base.html', context)
     else:
+        # get all members according to their batches
+        evening = Member.objects.filter(batch='evening')
+        morning = Member.objects.filter(batch='morning')
         form = AddMemberForm()
         context = {
             'form': form,
-            'view_all': view_all,
+            'morning': morning,
+            'evening': evening,
             'search_form': search_form,
             'subs_end_today_count': subs_end_today_count,
         }
@@ -79,9 +101,14 @@ def delete_member(request, id):
     view_all = Member.objects.all()
     form = AddMemberForm()
     search_form = SearchForm()
+
+    # get all members according to their batches
+    evening = Member.objects.filter(batch='evening')
+    morning = Member.objects.filter(batch='morning')
     context = {
         'form': form,
-        'view_all': view_all,
+        'morning': morning,
+        'evening': evening,
         'search_form': search_form,
         'deleted': 'User Deleted Successfully',
         'subs_end_today_count': subs_end_today_count,
@@ -107,6 +134,16 @@ def update_member(request, id):
             photo = fs.save(myfile.name, myfile)
             object.photo = fs.url(photo)
         object.save()
+
+        # Add payments if payment is 'paid'
+        if object.fee_status == 'paid':
+            payments = Payments(
+                                user=object,
+                                payment_date=object.registration_date,
+                                payment_period=object.subscription_period,
+                                payment_amount=object.amount)
+            payments.save()
+
         user = Member.objects.get(pk=id)
         subs_end_today_count = Member.objects.filter(
                                                     registration_upto=datetime.datetime.now(),
@@ -121,9 +158,16 @@ def update_member(request, id):
                                 'first_name': user.first_name,
                                 'last_name': user.last_name,
                                 })
+
+        try:
+            payments = Payments.objects.filter(user=user)
+        except Payments.DoesNotExist:
+            payments = 'No Records'
+
         return render(request,
             'update.html',
             {
+                'payments': payments,
                 'form': form,
                 'user': user,
                 'updated': 'Record Updated Successfully',
@@ -134,6 +178,10 @@ def update_member(request, id):
         subs_end_today_count = Member.objects.filter(
                                                 registration_upto=datetime.datetime.now(),
                                                 notification=1).count()
+        if len(Payments.objects.filter(user=user)) > 0:
+            payments = Payments.objects.filter(user=user)
+        else:
+            payments = 'No Records'
         form = UpdateMemberForm(initial={
                                 'registration_date': user.registration_date,
                                 'registration_upto': user.registration_upto,
@@ -147,6 +195,7 @@ def update_member(request, id):
     return render(request,
                     'update.html',
                     {
+                        'payments': payments,
                         'form': form,
                         'user': user,
                         'subs_end_today_count': subs_end_today_count,
