@@ -42,7 +42,17 @@ A simple gym member manager to keep a track of all payments and members
     $python3 manage.py runserver
     ```
 
-Built with ♥ and :coffee: by [`Omkar Pathak`](http://www.omkarpathak.in/)
+- For creating a user execute:
+
+    ```
+    $python3 manage.py createsuperuser
+    # Follow the instructions
+    ```
+
+- You can now login to the system!
+
+
+### Built with ♥ and :coffee: by [`Omkar Pathak`](http://www.omkarpathak.in/)
 
 # Donation
 
