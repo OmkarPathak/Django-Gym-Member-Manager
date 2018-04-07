@@ -30,3 +30,8 @@
 .icon-checkmark:before {
   content: "\ea10";
 }
+
+.carousel-inner img{
+  width: 100%;
+  height: auto;
+}
