@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/edvm/Django-Gym-Member-Manager/tree/dev.svg?style=svg)](https://circleci.com/gh/edvm/Django-Gym-Member-Manager/tree/dev)
+
 # Django-Gym-Member-Manager
 A Gym Member Manager Web App using Django
 
