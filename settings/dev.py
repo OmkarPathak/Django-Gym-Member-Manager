@@ -4,7 +4,7 @@ Django settings for Gymnasium project in dev mode.
 
 from .base import *
 
-
+DEBUG=True
 SECRET_KEY = 'too-secret'
 ALLOWED_HOSTS = ['*']
 
