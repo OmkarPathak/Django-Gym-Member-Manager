@@ -38,3 +38,4 @@ env*
 .tools_venv/
 *package-lock.json
 db.sqlite3
+.vscode
