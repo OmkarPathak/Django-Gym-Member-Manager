@@ -1,4 +1,4 @@
-Django==2.0.3
+Django
 Pillow==5.0.0
 python-datauri==0.2.6
 python-dateutil==2.7.0
