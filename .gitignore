@@ -1,0 +1,40 @@
+# sigh.. macs...
+.DS_Store
+.#*
+#
+# dev dirs
+# ignore vagrant as directory or symlink:
+.vagrant
+.vagrant/
+.idea/
+.showcase/
+.workshop/
+venv*
+mp_venv*
+node_modules/
+.mppy/
+py_eos/
+db/
+#
+# build artifacts
+build-temp/
+builds/
+django/static/
+.pip/
+.metadata/
+version.txt
+#
+# python "temp" files
+*.pyc
+*.pyo
+#
+# temp files (vim, emacs)
+.*.swp
+*~
+.dependencies
+docs/_build/
+.mp_venv/
+env*
+.tools_venv/
+*package-lock.json
+db.sqlite3
