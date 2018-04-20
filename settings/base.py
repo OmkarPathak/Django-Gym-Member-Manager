@@ -28,7 +28,7 @@ DEBUG = False
 ALLOWED_HOSTS = []
 
 # After succesful login go to path:
-LOGIN_REDIRECT_URL = '/members/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 # After Logout
 LOGOUT_REDIRECT_URL = '/'
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'dashboard',
     'accounts',
     'members',
     'notifications',

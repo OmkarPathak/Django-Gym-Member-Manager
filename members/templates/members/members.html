@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link  {% if not deleted %} active {% endif %}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Miembros del Gym</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if deleted %} active {% endif %}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Update</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">View All</a>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade {% if not deleted %}show active{% endif %}" id="home" role="tabpanel" aria-labelledby="home-tab">
+      {% include "members/list.html" %}
+    </div>
+    <div class="tab-pane fade {% if deleted %}show active{% endif %}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+      {% include "update_member.html" %}
+    </div>
+    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+      {% include "view_member.html" %}
+    </div>
+  </div>
+{% endblock %}

@@ -26,7 +26,7 @@ def members(request):
         'search_form': search_form,
         'subs_end_today_count': subs_end_today_count,
     }
-    return render(request, 'tab_base.html', context)
+    return render(request, 'members/members.html', context)
 
 def add_member(request):
     view_all = Member.objects.all()
