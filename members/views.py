@@ -19,8 +19,10 @@ def members(request):
     # get all members according to their batches
     evening = Member.objects.filter(batch='evening')
     morning = Member.objects.filter(batch='morning')
+    members = Member.objects.all()  # TODO: filter by active members
     context = {
         'form': form,
+        'members': members,
         'morning': morning,
         'evening': evening,
         'search_form': search_form,

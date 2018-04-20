@@ -1,65 +1,43 @@
 {% load i18n %}
 
-    <div class="card">
-        <div class="header">
-            <h4 class="title">{% trans 'Lista de miembros' %}
-                <button type="submit" class="btn btn-info btn-fill btn-wd pull-right">{% trans 'Nuevo Miembro' %}</button>
-            </h4>
-            <p class="category">{% trans 'Listado de miembros activos del gimnasio (con la cuota al día)' %}</p>
-        </div>
-        <div class="content table-responsive table-full-width">
-            <table class="table table-striped">
-                <thead>
-                    <th>ID</th>
-                	<th>Name</th>
-                	<th>Salary</th>
-                	<th>Country</th>
-                	<th>City</th>
-                </thead>
-                <tbody>
-                    <tr>
-                    	<td>1</td>
-                    	<td>Dakota Rice</td>
-                    	<td>$36,738</td>
-                    	<td>Niger</td>
-                    	<td>Oud-Turnhout</td>
-                    </tr>
-                    <tr>
-                    	<td>2</td>
-                    	<td>Minerva Hooper</td>
-                    	<td>$23,789</td>
-                    	<td>Curaçao</td>
-                    	<td>Sinaai-Waas</td>
-                    </tr>
-                    <tr>
-                    	<td>3</td>
-                    	<td>Sage Rodriguez</td>
-                    	<td>$56,142</td>
-                    	<td>Netherlands</td>
-                    	<td>Baileux</td>
-                    </tr>
-                    <tr>
-                    	<td>4</td>
-                    	<td>Philip Chaney</td>
-                    	<td>$38,735</td>
-                    	<td>Korea, South</td>
-                    	<td>Overland Park</td>
-                    </tr>
-                    <tr>
-                    	<td>5</td>
-                    	<td>Doris Greene</td>
-                    	<td>$63,542</td>
-                    	<td>Malawi</td>
-                    	<td>Feldkirchen in Kärnten</td>
-                    </tr>
-                    <tr>
-                    	<td>6</td>
-                    	<td>Mason Porter</td>
-                    	<td>$78,615</td>
-                    	<td>Chile</td>
-                    	<td>Gloucester</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<div class="card">
+    <div class="header">
+        <h4 class="title">{% trans 'Lista de miembros activos' %}
+            <button type="submit" class="btn btn-info btn-fill btn-wd pull-right">{% trans 'Nuevo Miembro' %}</button>
+        </h4>
+        <p class="category">{% trans 'Los miembros activos son los quienes tienen la cuota al día' %}</p>
     </div>
+    <div class="content table-responsive table-full-width">
+        <table class="table table-striped">
+            <thead>
+                <th>{% trans 'Nombre' %}</th>
+                <th>{% trans 'Teléfono' %}</th>
+                <th>{% trans 'Actividad' %}</th>
+                <th>{% trans 'Cuota al día' %}</th>
+            </thead>
+            <tbody>
+            {% for member in members %}
+              <tr>
+                <!-- <th scope="row">{{ forloop.counter }}</th> -->
+                <td><a href="/members/update/{{ member.member_id }}">{{ member.first_name }} {{ member.last_name }}</a></td>
+                <td>{{ member.phone }}</td>
+                <td>{{ member.get_subscription_type_display }}</td>
+                <td>
+                    {% if member.fee_status == 'paid' %}
+                    <span class="icon-checkmark" style="color: green"></span>
+                    {% else %}
+                    <span class="icon-cross" style="color: red"></span>
+                    {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+                <!-- <tr>
+                    <td>Dakota Rice</td>
+                    <td>$36,738</td>
+                    <td>Niger</td>
+                    <td>Oud-Turnhout</td>
+                </tr> -->
+            </tbody>
+        </table>
+    </div>
+</div>
