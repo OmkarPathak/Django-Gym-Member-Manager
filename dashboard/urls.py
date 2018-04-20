@@ -1,4 +1,4 @@
-"""Gymnasium URL Configuration
+"""Dashboard URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.0/topics/http/urls/
@@ -13,20 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
+from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('dashboard/', include('dashboard.urls')),
-    path('members/', include('members.urls')),
-    path('notifications/', include('notifications.urls')),
-    path('reports/', include('reports.urls')),
-    path('', include('accounts.urls'))
+    path('', views.DashboardView.as_view(), name='dashboard'),
 ]
-
-# for handling profile photos
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
