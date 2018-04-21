@@ -55,6 +55,11 @@ class Member(models.Model):
 
 
 class AddMemberForm(ModelForm):
+	def __init__(self, *args, **kwargs):
+		super(AddMemberForm, self).__init__(*args, **kwargs)
+		self.fields['first_name'].error_messages = {'required': 'Please enter first name'}
+		self.fields['last_name'].error_messages = {'required': 'Please enter last name'}
+
 	class Meta:
 		model = Member
 		# fields = ['first_name', 'last_name', 'mobile_number', 'email', 'address', 'subscription_type', 'subscription_period', 'amount']

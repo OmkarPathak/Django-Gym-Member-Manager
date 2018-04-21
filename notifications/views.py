@@ -10,7 +10,7 @@ def notifications(request):
                                         registration_upto__gte=last_5_days,
                                         notification=2)
     subs_end_today_count = Member.objects.filter(registration_upto=datetime.datetime.now(),
-                                        notification=1).count()
+                                        notification=2).count()
     members_today = Member.objects.filter(registration_upto=datetime.datetime.now(),
                                         notification=2)
 

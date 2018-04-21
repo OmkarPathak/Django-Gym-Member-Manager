@@ -8,11 +8,13 @@ import dateutil.parser as parser
 from django.core.files.storage import FileSystemStorage
 from payments.models import Payments
 
-# Create your views here.
+# Get the count of notification (notification will be incremented if the user's fee due date is today!)
+subs_end_today_count = Member.objects.filter(
+                                            registration_upto=datetime.datetime.now(),
+                                            notification=2
+                                            ).count()
+
 def members(request):
-    subs_end_today_count = Member.objects.filter(
-                                                registration_upto=datetime.datetime.now(),
-                                                notification=1).count()
     view_all = Member.objects.all()
     form = AddMemberForm()
     search_form = SearchForm()
@@ -32,7 +34,7 @@ def add_member(request):
     view_all = Member.objects.all()
     subs_end_today_count = Member.objects.filter(
                                             registration_upto=datetime.datetime.now(),
-                                            notification=1).count()
+                                            notification=2).count()
     search_form = SearchForm()
     success = 0
     if request.method == 'POST':
@@ -94,9 +96,6 @@ def search_member(request):
     return render(request, 'tab_base.html', {'search_form': search_form})
 
 def delete_member(request, id):
-    subs_end_today_count = Member.objects.filter(
-                                                registration_upto=datetime.datetime.now(),
-                                                notification=1).count()
     Member.objects.filter(pk=id).delete()
     view_all = Member.objects.all()
     form = AddMemberForm()
@@ -145,9 +144,6 @@ def update_member(request, id):
             payments.save()
 
         user = Member.objects.get(pk=id)
-        subs_end_today_count = Member.objects.filter(
-                                                    registration_upto=datetime.datetime.now(),
-                                                    notification=1).count()
         form = UpdateMemberForm(initial={
                                 'registration_date': user.registration_date,
                                 'registration_upto': user.registration_upto,
@@ -175,9 +171,7 @@ def update_member(request, id):
             })
     else:
         user = Member.objects.get(pk=id)
-        subs_end_today_count = Member.objects.filter(
-                                                registration_upto=datetime.datetime.now(),
-                                                notification=1).count()
+
         if len(Payments.objects.filter(user=user)) > 0:
             payments = Payments.objects.filter(user=user)
         else:
