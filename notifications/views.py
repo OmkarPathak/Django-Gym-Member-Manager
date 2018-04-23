@@ -39,11 +39,12 @@ def notification_delete(request, id):
     members_before = Member.objects.filter(
                                         registration_upto__lte=datetime.datetime.now(),
                                         registration_upto__gte=last_5_days,
-                                        notification=1)
-    subs_end_today_count = Member.objects.filter(registration_upto=datetime.datetime.now(),
-                                                notification=1).count()
+                                        notification=2)
+    subs_end_today_count = Member.objects.filter(
+                                            registration_upto=datetime.datetime.now(),
+                                            notification=1).count()
     members_today = Member.objects.filter(registration_upto=datetime.datetime.now(),
-                                        notification=1)
+                                        notification=2)
 
     context = {
         'subs_end_today_count': subs_end_today_count,

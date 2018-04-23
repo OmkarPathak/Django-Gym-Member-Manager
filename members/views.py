@@ -120,7 +120,12 @@ def update_member(request, id):
         object.first_name = request.POST.get('first_name')
         object.last_name = request.POST.get('last_name')
         object.registration_date =  request.POST.get('registration_date')
-        object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+        day = parser.parse(request.POST.get('registration_date')).day
+        last_day = parser.parse(str(object.registration_upto)).day
+        if day != last_day:
+            object.registration_upto =  parser.parse(request.POST.get('registration_date'))
+        else:
+            object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
         object.subscription_type =  request.POST.get('subscription_type')
         object.fee_status = request.POST.get('fee_status')
         object.amount =  request.POST.get('amount')
@@ -136,16 +141,18 @@ def update_member(request, id):
 
         # Add payments if payment is 'paid'
         if object.fee_status == 'paid':
-            payments = Payments(
-                                user=object,
-                                payment_date=object.registration_date,
-                                payment_period=object.subscription_period,
-                                payment_amount=object.amount)
-            payments.save()
+            check = Payments.objects.filter(payment_date=object.registration_date).count()
+            if check == 0:
+                payments = Payments(
+                                    user=object,
+                                    payment_date=object.registration_date,
+                                    payment_period=object.subscription_period,
+                                    payment_amount=object.amount)
+                payments.save()
 
         user = Member.objects.get(pk=id)
         form = UpdateMemberForm(initial={
-                                'registration_date': user.registration_date,
+                                'registration_date': user.registration_upto,
                                 'registration_upto': user.registration_upto,
                                 'subscription_type': user.subscription_type,
                                 'subscription_period': user.subscription_period,
@@ -177,7 +184,7 @@ def update_member(request, id):
         else:
             payments = 'No Records'
         form = UpdateMemberForm(initial={
-                                'registration_date': user.registration_date,
+                                'registration_date': user.registration_upto,
                                 'registration_upto': user.registration_upto,
                                 'subscription_type': user.subscription_type,
                                 'subscription_period': user.subscription_period,
