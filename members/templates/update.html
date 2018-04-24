@@ -23,49 +23,64 @@
               {{ updated }}
           </div>
           {% endif %}
+          <h2>Edit Gym Membership Information:</h2>
+          <hr>
           <form method="POST" action="{% url 'update_member' user.member_id %}" style="margin-top: 2%" enctype="multipart/form-data">
               {% csrf_token %}
               <div class="row">
-                <div class="form-group col">
-                  <label for="first_name">{{ form.first_name.label }}</label>
-                    {{ form.first_name | add_css:"form-control" }}
-                </div>
-                <div class="form-group col">
-                  <label for="last_name">{{ form.last_name.label }}</label>
-                    {{ form.last_name | add_css:"form-control" }}
-                </div>
-              </div>
-              <div class="row">
                   <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <label for="subscription_type">{{ form.subscription_type.label }}</label>
-                    {{ form.subscription_type | add_css:"form-control" }}
+                    <label for="subscription_type">{{ gym_form.subscription_type.label }}</label>
+                    {{ gym_form.subscription_type | add_css:"form-control" }}
                   </div>
                   <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <label for="subscription_period">{{ form.subscription_period.label }}</label>
-                    {{ form.subscription_period | add_css:"form-control" }}
+                    <label for="subscription_period">{{ gym_form.subscription_period.label }}</label>
+                    {{ gym_form.subscription_period | add_css:"form-control" }}
                   </div>
               </div>
               <div class="row">
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <label for="registration_upto">{{ form.registration_upto.label }}</label>
-                  {{ form.registration_date | add_css:"form-control" }}
+                  <label for="registration_upto">{{ gym_form.registration_upto.label }}</label>
+                  {{ gym_form.registration_date | add_css:"form-control" }}
                 </div>
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <label for="amount">{{ form.amount.label }}</label>
-                  {{ form.amount | add_css:"form-control" }}
+                  <label for="amount">{{ gym_form.amount.label }}</label>
+                  {{ gym_form.amount | add_css:"form-control" }}
                 </div>
               </div>
               <div class="row">
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <label for="photo">{{ form.fee_status.label }}</label>
-                  {{ form.fee_status | add_css:"form-control" }}
+                  <label for="photo">{{ gym_form.fee_status.label }}</label>
+                  {{ gym_form.fee_status | add_css:"form-control" }}
                 </div>
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <label for="photo">{{ form.photo.label }}</label>
-                  {{ form.photo | add_css:"form-control" }}
+                  <input type="submit" class="btn btn-primary" name="gym_membership" value="Update" style="margin-top: 9%;" />
                 </div>
               </div>
-              <input type="submit" class="btn btn-primary" value="Update" />
+            </form>
+
+            <h2>Edit Personal Information:</h2>
+            <hr>
+            <form method="POST" action="{% url 'update_member' user.member_id %}" style="margin-top: 2%" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="row">
+                <div class="form-group col">
+                  <label for="first_name">{{ info_form.first_name.label }}</label>
+                    {{ info_form.first_name | add_css:"form-control" }}
+                </div>
+                <div class="form-group col">
+                  <label for="last_name">{{ info_form.last_name.label }}</label>
+                    {{ info_form.last_name | add_css:"form-control" }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <label for="photo">{{ info_form.photo.label }}</label>
+                  {{ info_form.photo | add_css:"form-control" }}
+                </div>
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <input type="submit" class="btn btn-primary" name="info" value="Update Info" style="margin-top: 10%;" />
+                </div>
+              </div>
             </form>
 
             <hr>

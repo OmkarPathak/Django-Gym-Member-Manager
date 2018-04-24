@@ -45,8 +45,14 @@ class Member(models.Model):
 									choices=SUBSCRIPTION_PERIOD_CHOICES,
 									default=SUBSCRIPTION_PERIOD_CHOICES[0][0])
 	amount = models.IntegerField()
-	fee_status = models.CharField(max_length=30, choices=FEE_STATUS, default=FEE_STATUS[0][0])
-	batch = models.CharField(max_length=30, choices=BATCH, default=BATCH[0][0])
+	fee_status = models.CharField(
+								max_length=30,
+								choices=FEE_STATUS,
+								default=FEE_STATUS[0][0])
+	batch = models.CharField(
+							max_length=30,
+							choices=BATCH,
+							default=BATCH[0][0])
 	photo = models.FileField(upload_to='photos/', blank=True)
 	notification = models.IntegerField(default=2, blank=True)
 
@@ -80,13 +86,15 @@ class AddMemberForm(ModelForm):
 class SearchForm(forms.Form):
 		search = forms.CharField(label='Search Member', max_length=100)
 
-class UpdateMemberForm(forms.Form):
-	first_name = forms.CharField(max_length=50)
-	last_name = forms.CharField(max_length=50)
+class UpdateMemberGymForm(forms.Form):
 	registration_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 	registration_upto = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 	subscription_type  = forms.ChoiceField(choices=SUBSCRIPTION_TYPE_CHOICES)
 	subscription_period = forms.ChoiceField(choices=SUBSCRIPTION_PERIOD_CHOICES)
 	fee_status = forms.ChoiceField(choices=FEE_STATUS)
 	amount = forms.IntegerField()
+
+class UpdateMemberInfoForm(forms.Form):
+	first_name = forms.CharField(max_length=50)
+	last_name = forms.CharField(max_length=50)
 	photo = forms.FileField(label='Update Photo', required=False)
