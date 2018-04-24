@@ -58,18 +58,18 @@ def add_member(request):
 
             form = AddMemberForm()
         # get all members according to their batches
-        evening = Member.objects.filter(batch='evening')
-        morning = Member.objects.filter(batch='morning')
+        # evening = Member.objects.filter(batch='evening')
+        # morning = Member.objects.filter(batch='morning')
 
-        context = {
-            'add_success': success,
-            'form': form,
-            'morning': morning,
-            'evening': evening,
-            'search_form': search_form,
-            'subs_end_today_count': subs_end_today_count,
-        }
-        return render(request, 'tab_base.html', context)
+        # context = {
+        #     'add_success': success,
+        #     'form': form,
+        #     'morning': morning,
+        #     'evening': evening,
+        #     'search_form': search_form,
+        #     'subs_end_today_count': subs_end_today_count,
+        # }
+        return render(request, 'homepage_after_login.html')
     else:
         # get all members according to their batches
         evening = Member.objects.filter(batch='evening')

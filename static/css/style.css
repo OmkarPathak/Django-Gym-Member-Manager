@@ -33,5 +33,7 @@
 
 .carousel-inner img{
   width: 100%;
-  height: auto;
+  height: 91vh;
+  background-position: center;
+  background-size: cover;
 }

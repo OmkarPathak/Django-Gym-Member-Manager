@@ -22,5 +22,5 @@ urlpatterns = [
     path('search/', login_required(views.search_member), name='search_member'),
     path('delete/<int:id>/', login_required(views.delete_member), name='delete_member'),
     path('update/<int:id>/', login_required(views.update_member), name='update_member'),
-    path('', views.members, name='members'),
+    path('', login_required(views.members), name='members'),
 ]
