@@ -6,36 +6,30 @@
 {% endblock %}
 
 {% block without_container %}
-<div class="container-fluid text-center" style="padding: 0; margin-top: 0">
+<div class="container-fluid text-center" id="homepage" style="padding: 0; margin-top: 0">
     <div id="demo" class="carousel" data-ride="carousel" data-interval="2000">
 
       <!-- Indicators -->
-      <ul class="carousel-indicators">
+      <!-- <ul class="carousel-indicators">
         <li data-target="#demo" data-slide-to="0" class="active"></li>
         <li data-target="#demo" data-slide-to="1"></li>
         <li data-target="#demo" data-slide-to="2"></li>
-      </ul>
+      </ul> -->
 
       <!-- The slideshow -->
       <div role="listbox" class="carousel-inner">
         <div class="carousel-item active">
           <img src="{% static 'images/homepage1.jpg' %}" class="img-fluid" alt="">
         </div>
-        <div class="carousel-item">
-          <img src="{% static 'images/homepage2.jpg' %}" class="img-fluid" alt="">
-        </div>
-        <div class="carousel-item">
-          <img src="{% static 'images/homepage3.jpg' %}" class="img-fluid" alt="">
-        </div>
       </div>
 
       <!-- Left and right controls -->
-      <a class="carousel-control-prev" href="#demo" data-slide="prev">
+      <!-- <a class="carousel-control-prev" href="#demo" data-slide="prev">
         <span class="carousel-control-prev-icon"></span>
       </a>
       <a class="carousel-control-next" href="#demo" data-slide="next">
         <span class="carousel-control-next-icon"></span>
-      </a>
+      </a> -->
     </div>
 </div>
 {% endblock %}
