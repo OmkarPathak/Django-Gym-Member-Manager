@@ -81,7 +81,10 @@ class AddMemberForm(ModelForm):
 		if Member.objects.filter(mobile_number=mobile_number).exists():
 			raise forms.ValidationError('This mobile number has already been registered.')
 		else:
-			return mobile_number
+			if len(str(mobile_number)) == 10:
+				return mobile_number
+			else:
+				raise forms.ValidationError('Mobile number should be 10 digits long.')
 
 class SearchForm(forms.Form):
 		search = forms.CharField(label='Search Member', max_length=100)
