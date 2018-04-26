@@ -11,14 +11,16 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Get the count of notification (notification will be incremented if the user's fee due date is today!)
 subs_end_today_count = Member.objects.filter(
-                                            registration_upto=datetime.datetime.now(),
+                                            registration_upto__lte=datetime.datetime.now(),
+                                            registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
                                             notification=1
                                             ).count()
 
 def members(request):
     # Get the count of notification (notification will be incremented if the user's fee due date is today!)
     subs_end_today_count = Member.objects.filter(
-                                            registration_upto=datetime.datetime.now(),
+                                            registration_upto__lte=datetime.datetime.now(),
+                                            registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
                                             notification=1
                                             ).count()
     form = AddMemberForm()
@@ -31,7 +33,8 @@ def members(request):
 def view_member(request):
     # Get the count of notification (notification will be incremented if the user's fee due date is today!)
     subs_end_today_count = Member.objects.filter(
-                                            registration_upto=datetime.datetime.now(),
+                                            registration_upto__lte=datetime.datetime.now(),
+                                            registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
                                             notification=1
                                             ).count()
     view_all = Member.objects.all()
@@ -132,7 +135,8 @@ def delete_member(request, id):
 
 def update_member(request, id):
     subs_end_today_count = Member.objects.filter(
-                                            registration_upto=datetime.datetime.now(),
+                                            registration_upto__lte=datetime.datetime.now(),
+                                            registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
                                             notification=1
                                             ).count()
     if request.method == 'POST' and request.POST.get('gym_membership'):

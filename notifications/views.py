@@ -31,14 +31,16 @@ def notifications(request):
             member.save()
 
     members_before = Member.objects.filter(
-                                        registration_upto__lt=datetime.datetime.now(),
+                                        registration_upto__lt=datetime.datetime.now() - datetime.timedelta(days=2),
                                         notification=1)
     members_today = Member.objects.filter(
-                                        registration_upto=datetime.datetime.now(),
+                                        registration_upto__lte=datetime.datetime.now(),
+                                        registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
                                         notification=1)
 
     subs_end_today_count = Member.objects.filter(
-                                        registration_upto=datetime.datetime.now(),
+                                        registration_upto__lte=datetime.datetime.now(),
+                                        registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
                                         notification=1).count()
     context = {
         'subs_end_today_count': subs_end_today_count,
@@ -56,7 +58,8 @@ def notification_delete(request, id):
                                         registration_upto__lt=datetime.datetime.now(),
                                         notification=2)
     subs_end_today_count = Member.objects.filter(
-                                            registration_upto=datetime.datetime.now(),
+                                            registration_upto__lte=datetime.datetime.now(),
+                                            registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
                                             notification=1).count()
     members_today = Member.objects.filter(
                                         registration_upto__lte=datetime.datetime.now(),
