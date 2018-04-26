@@ -6,13 +6,12 @@ import datetime
 from .models import GenerateReportForm
 
 # Create your views here.
-def export_all(user):
+def export_all(user_obj):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="users.csv"'
     writer = csv.writer(response)
-    writer.writerow(['First name', 'Last name', 'Email address', 'Admission Date'])
-    members = user.values_list('first_name', 'last_name', 'email', 'admitted_on')
-    # print(Member.objects.filter(registration_upto__lte=datetime.datetime.now()).values_list('first_name', 'last_name', 'email', 'subscription_type'))
+    writer.writerow(['First name', 'Last name', 'Mobile', 'Admission Date', 'Subscription Type', 'Batch'])
+    members = user_obj.values_list('first_name', 'last_name', 'mobile_number', 'admitted_on', 'subscription_type', 'batch')
     for user in members:
         writer.writerow(user)
 
