@@ -135,3 +135,9 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
+
+WALLPAPER_FILES = os.path.normpath(MEDIA_ROOT+'/wallpaper')
+WALLPAPER_URL = os.path.normpath(MEDIA_URL+'/wallpaper/')
+
+PHOTOS_FILES = os.path.normpath(MEDIA_ROOT+'/photos')
+PHOTOS_URL = os.path.normpath(MEDIA_URL+'/photos/')

@@ -19,7 +19,11 @@
       <!-- The slideshow -->
       <div role="listbox" class="carousel-inner">
         <div class="carousel-item active">
+          {% if wallpaper.photo %}
+          <img src="{{ wallpaper.photo }}" class="img-fluid">
+          {% else %}
           <img src="{% static 'images/after_login.jpg' %}" class="img-fluid" alt="">
+          {% endif %}
         </div>
         <!-- <div class="carousel-caption" style="height: 50vh;">
           <h1>Welcome to PowerPack Fitness Club</h1>
