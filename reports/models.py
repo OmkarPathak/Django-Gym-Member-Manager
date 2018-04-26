@@ -1,5 +1,5 @@
 from django.db import models
-from members.models import Member
+from members.models import Member, BATCH
 from django.forms import ModelForm
 from django.db import models
 import datetime, calendar
@@ -15,6 +15,9 @@ MONTHS_CHOICES = tuple(zip(range(1,13), (calendar.month_name[i] for i in range(1
 class GenerateReports(models.Model):
     month = models.IntegerField(choices=MONTHS_CHOICES, default=datetime.datetime.now().year, blank=True)
     year = models.IntegerField(choices=YEAR_CHOICES, default=datetime.datetime.now().year)
+    batch = models.CharField(
+                            max_length=30,
+                            choices=BATCH, blank=True)
 
 class GenerateReportForm(ModelForm):
     class Meta:

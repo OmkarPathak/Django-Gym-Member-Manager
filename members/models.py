@@ -33,6 +33,7 @@ class Member(models.Model):
 	mobile_number = models.IntegerField(unique=True)
 	email = models.EmailField(null=True, blank=True)
 	address = models.CharField(max_length=300, blank=True)
+	medical_history = models.CharField(max_length=300, blank=True, default='None')
 	admitted_on = models.DateField(auto_now_add=True)
 	registration_date = models.DateField()
 	registration_upto = models.DateField()
@@ -74,6 +75,8 @@ class AddMemberForm(ModelForm):
 		widgets = {
 			'registration_date': forms.DateInput(attrs={'type': 'date'}),
 			'registration_upto': forms.DateInput(attrs={'type': 'date'}),
+			'address': forms.Textarea(attrs={'cols': 80, 'rows': 3}),
+			'medical_history': forms.Textarea(attrs={'cols': 80, 'rows': 3}),
 		}
 
 	def clean_mobile_number(self, *args, **kwargs):
@@ -87,7 +90,13 @@ class AddMemberForm(ModelForm):
 				raise forms.ValidationError('Mobile number should be 10 digits long.')
 
 class SearchForm(forms.Form):
-		search = forms.CharField(label='Search Member', max_length=100)
+		search = forms.CharField(label='Search Member', max_length=100, required=False)
+
+		def clean_search(self, *args, **kwargs):
+			search = self.cleaned_data.get('search')
+			if search == '':
+				raise forms.ValidationError('Please enter a name in search box')
+			return search
 
 class UpdateMemberGymForm(forms.Form):
 	registration_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))

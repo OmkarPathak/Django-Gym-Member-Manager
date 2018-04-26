@@ -20,6 +20,6 @@ from django.views.generic.base import TemplateView
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
-    path('homepage/', login_required(views.homepage_after_login), name="homepage_after_login"),
-    path('', views.homepage, name="homepage"),
+    path('', login_required(views.homepage_after_login), name="homepage_after_login"),
+    # path('', views.homepage, name="homepage"),
 ]

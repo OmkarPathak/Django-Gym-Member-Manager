@@ -29,40 +29,4 @@
   </div>
 {% endblock %}
 
-{% block javascript %}
-  <script>
-    $("#submit").click(function (event) {
-      event.preventDefault();
-      var search = $("#id_search").val();
 
-      $.ajax({
-        type: 'POST',
-        url: '{% url "search_member" %}',
-        data: {
-          'search': search,
-          'csrfmiddlewaretoken': '{{ csrf_token }}'
-        },
-        dataType: 'json',
-        success: function (data) {
-          var search = JSON.parse(data.search);
-          var appended_html = '<table class="table table-bordered"><thead class="text-center"><tr><th>ID</th><th>Name</th><th>Edit</th><th>Delete</th></tr></thead><tbody class="text-center">';
-          for (var i=0; i<search.length; i++) {
-              // now each search[i] has an object within it
-              var obj = search[i];  // obj is an alias for each object in the array
-              //Now you can access each key-value pair like this
-              var fields = obj.fields;
-              var member_id = obj.pk;
-              var first_name = fields.first_name;
-              var last_name = fields.last_name;
-              appended_html += '<tr><td>' + (i + 1) + '</td><td>' + first_name + ' ' + last_name + '</td><td><a href="/members/update/' + member_id + '/"><button class="btn btn-success">Edit</button><td><a href="/members/delete/' + member_id + '/"><button class="btn btn-danger">Delete</button></a></td></tr>';
-          }
-          // alert(appended_html);
-          // alert('Yes');
-          appended_html += '</tbody></table>';
-          $('#ajax_result').html(appended_html);
-        }
-      });
-      // return false;
-    });
-  </script>
-{% endblock %}

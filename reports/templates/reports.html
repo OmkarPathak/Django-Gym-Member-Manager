@@ -5,7 +5,7 @@
 <!-- <a href="{% url 'export_all' %}">Export all users</a> -->
 <form method="POST" action="{% url 'reports' %}">
     {% csrf_token %}
-    <div class="row">
+    <div class="row container">
         <div class="col">
             <label for="month">{{ form.month.label }}</label>
             {{ form.month | add_css:"form-control" }}
@@ -13,6 +13,10 @@
         <div class="col">
             <label for="year">{{ form.year.label }}</label>
             {{ form.year | add_css:"form-control" }}
+        </div>
+        <div class="col">
+            <label for="batch">{{ form.batch.label }}</label>
+            {{ form.batch | add_css:"form-control" }}
         </div>
         <div style="margin-top: 3%">
             <button type="submit" id="submit" class="btn btn-primary">Generate Report</button>

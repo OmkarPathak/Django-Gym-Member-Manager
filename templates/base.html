@@ -25,7 +25,10 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item {% if request.resolver_match.url_name == 'members' %} active {% endif %}">
-            <a class="nav-link" href="{% url 'members'%}">Admissions<span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="{% url 'members'%}">New Admission<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item  {% if request.resolver_match.url_name == 'view_member' %} active {% endif %}">
+            <a class="nav-link" href="{% url 'view_member'%}">View All Members</a>
           </li>
           <li class="nav-item {% if request.resolver_match.url_name == 'reports' %} active {% endif %}">
             <a class="nav-link" href="{% url 'reports' %}">Reports</a>
@@ -43,9 +46,9 @@
         {% else %}
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
-            <li class="nav-item active">
+           <!--  <li class="nav-item active">
               <a class="nav-link" href="{% url 'login'%}">Login<span class="sr-only">(current)</span></a>
-            </li>
+            </li> -->
           </ul>
         {% endif %}
 

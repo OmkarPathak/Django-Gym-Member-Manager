@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # After succesful login go to path:
-LOGIN_REDIRECT_URL = '/homepage/'
+LOGIN_REDIRECT_URL = '/'
 # After Logout
 LOGOUT_REDIRECT_URL = '/'
 

@@ -7,6 +7,7 @@ import dateutil.relativedelta as delta
 import dateutil.parser as parser
 from django.core.files.storage import FileSystemStorage
 from payments.models import Payments
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Get the count of notification (notification will be incremented if the user's fee due date is today!)
 subs_end_today_count = Member.objects.filter(
@@ -20,24 +21,43 @@ def members(request):
                                             registration_upto=datetime.datetime.now(),
                                             notification=1
                                             ).count()
-    view_all = Member.objects.all()
     form = AddMemberForm()
+    context = {
+        'form': form,
+        'subs_end_today_count': subs_end_today_count,
+    }
+    return render(request, 'add_member.html', context)
+
+def view_member(request):
+    # Get the count of notification (notification will be incremented if the user's fee due date is today!)
+    subs_end_today_count = Member.objects.filter(
+                                            registration_upto=datetime.datetime.now(),
+                                            notification=1
+                                            ).count()
+    view_all = Member.objects.all()
+    paginator = Paginator(view_all, 100)
+    try:
+        page = request.GET.get('page', 1)
+        view_all = paginator.page(page)
+    except PageNotAnInteger:
+        view_all = paginator.page(1)
+    except EmptyPage:
+        view_all = paginator.page(paginator.num_pages)
     search_form = SearchForm()
     # get all members according to their batches
     evening = Member.objects.filter(batch='evening')
     morning = Member.objects.filter(batch='morning')
     context = {
-        'form': form,
+        'all': view_all,
         'morning': morning,
         'evening': evening,
         'search_form': search_form,
         'subs_end_today_count': subs_end_today_count,
     }
-    return render(request, 'tab_base.html', context)
+    return render(request, 'view_member.html', context)
 
 def add_member(request):
     view_all = Member.objects.all()
-    search_form = SearchForm()
     success = 0
     if request.method == 'POST':
         form = AddMemberForm(request.POST, request.FILES)
@@ -57,64 +77,58 @@ def add_member(request):
                 payments.save()
 
             form = AddMemberForm()
-        # get all members according to their batches
-        evening = Member.objects.filter(batch='evening')
-        morning = Member.objects.filter(batch='morning')
 
         context = {
             'add_success': success,
             'form': form,
-            'morning': morning,
-            'evening': evening,
-            'search_form': search_form,
             'subs_end_today_count': subs_end_today_count,
         }
-        return render(request, 'tab_base.html', context)
+        return render(request, 'add_member.html', context)
     else:
-        # get all members according to their batches
-        evening = Member.objects.filter(batch='evening')
-        morning = Member.objects.filter(batch='morning')
         form = AddMemberForm()
         context = {
             'form': form,
-            'morning': morning,
-            'evening': evening,
-            'search_form': search_form,
             'subs_end_today_count': subs_end_today_count,
         }
-    return render(request, 'tab_base.html', context)
+    return render(request, 'add_member.html', context)
 
 def search_member(request):
     if request.method == 'POST':
         # search_form = SearchForm(request.POST)
-        first_name = request.POST.get('search')
-        check = Member.objects.filter(first_name__contains=first_name)
-        check = serializers.serialize('json', check)
-        context = {}
-        context['search'] = check
-        return JsonResponse(data=context, safe=False)
+        # first_name = request.POST.get('search')
+        # check = Member.objects.filter(first_name__contains=first_name)
+        # check = serializers.serialize('json', check)
+        # context = {}
+        # context['search'] = check
+        if 'clear' in request.POST:
+            return redirect('view_member')
+        search_form = SearchForm(request.POST)
+        result = 0
+        if search_form.is_valid():
+            first_name = request.POST.get('search')
+            result = Member.objects.filter(first_name__contains=first_name)
+
+        view_all = Member.objects.all()
+        # get all members according to their batches
+        evening = Member.objects.filter(batch='evening')
+        morning = Member.objects.filter(batch='morning')
+
+        context = {
+            'all': view_all,
+            'morning': morning,
+            'evening': evening,
+            'search_form': search_form,
+            'result': result,
+            'subs_end_today_count': subs_end_today_count,
+        }
+        return render(request, 'view_member.html', context)
     else:
         search_form = SearchForm()
-    return render(request, 'tab_base.html', {'search_form': search_form})
+    return render(request, 'view_member.html', {'search_form': search_form})
 
 def delete_member(request, id):
     Member.objects.filter(pk=id).delete()
-    view_all = Member.objects.all()
-    form = AddMemberForm()
-    search_form = SearchForm()
-
-    # get all members according to their batches
-    evening = Member.objects.filter(batch='evening')
-    morning = Member.objects.filter(batch='morning')
-    context = {
-        'form': form,
-        'morning': morning,
-        'evening': evening,
-        'search_form': search_form,
-        'deleted': 'User Deleted Successfully',
-        'subs_end_today_count': subs_end_today_count,
-    }
-    return render(request, 'tab_base.html', context)
+    return redirect('view_member')
 
 def update_member(request, id):
     subs_end_today_count = Member.objects.filter(
