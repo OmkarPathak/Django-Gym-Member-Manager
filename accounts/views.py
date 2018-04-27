@@ -52,5 +52,6 @@ def change_password(request):
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'change_password.html', {
-        'form': form
+        'form': form,
+        'subs_end_today_count': get_notification_count()
     })

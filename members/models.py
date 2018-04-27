@@ -31,14 +31,14 @@ class Member(models.Model):
 	member_id = models.AutoField(primary_key=True)
 	first_name = models.CharField(max_length=50)
 	last_name = models.CharField(max_length=50)
-	mobile_number = models.IntegerField(unique=True)
+	mobile_number = models.CharField(max_length=10, unique=True)
 	email = models.EmailField(null=True, blank=True)
 	address = models.CharField(max_length=300, blank=True)
 	medical_history = models.CharField(max_length=300, blank=True, default='None')
 	admitted_on = models.DateField(auto_now_add=True)
 	registration_date = models.DateField()
 	registration_upto = models.DateField()
-	dob = models.DateField(default=datetime.datetime.now())
+	dob = models.DateField(default='dd/mm/yyyy')
 	subscription_type  = models.CharField(
 									max_length=30,
 									choices=SUBSCRIPTION_TYPE_CHOICES,
@@ -47,7 +47,7 @@ class Member(models.Model):
 									max_length=30,
 									choices=SUBSCRIPTION_PERIOD_CHOICES,
 									default=SUBSCRIPTION_PERIOD_CHOICES[0][0])
-	amount = models.IntegerField()
+	amount = models.CharField(max_length=30)
 	fee_status = models.CharField(
 								max_length=30,
 								choices=FEE_STATUS,
@@ -84,6 +84,8 @@ class AddMemberForm(ModelForm):
 
 	def clean_mobile_number(self, *args, **kwargs):
 		mobile_number = self.cleaned_data.get('mobile_number')
+		if not mobile_number.isdigit():
+			raise forms.ValidationError('Mobile number should be a number')
 		if Member.objects.filter(mobile_number=mobile_number).exists():
 			raise forms.ValidationError('This mobile number has already been registered.')
 		else:
@@ -91,6 +93,13 @@ class AddMemberForm(ModelForm):
 				return mobile_number
 			else:
 				raise forms.ValidationError('Mobile number should be 10 digits long.')
+		return mobile_number
+
+	def clean_amount(self):
+		amount = self.cleaned_data.get('amount')
+		if not amount.isdigit():
+			raise forms.ValidationError('Amount should be a number')
+		return amount
 
 	def clean(self):
 		cleaned_data = super().clean()

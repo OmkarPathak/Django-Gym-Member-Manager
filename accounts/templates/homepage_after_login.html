@@ -6,36 +6,11 @@
 {% endblock %}
 
 {% block without_container %}
-<div class="container-fluid" id="homepage_after_login" style="padding: 0">
-    <div id="demo" class="carousel" data-ride="carousel" data-interval="2000">
-
-      <!-- Indicators -->
-      <!-- <ul class="carousel-indicators">
-        <li data-target="#demo" data-slide-to="0" class="active"></li>
-        <li data-target="#demo" data-slide-to="1"></li>
-        <li data-target="#demo" data-slide-to="2"></li>
-      </ul> -->
-
-      <!-- The slideshow -->
-      <div role="listbox" class="carousel-inner">
-        <div class="carousel-item active">
-          {% if wallpaper.photo %}
-          <img src="{{ wallpaper.photo }}" class="img-fluid">
-          {% else %}
-          <img src="{% static 'images/after_login.jpg' %}" class="img-fluid" alt="">
-          {% endif %}
-        </div>
-        <!-- <div class="carousel-caption" style="height: 50vh;">
-          <h1>Welcome to PowerPack Fitness Club</h1>
-        </div> -->
-      </div>
-
-      <!-- Left and right controls -->
-      <!-- <a class="carousel-control-prev" href="#demo" data-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </a>
-      <a class="carousel-control-next" href="#demo" data-slide="next">
-        <span class="carousel-control-next-icon"></span>
-      </a> -->
+<div class="container-fluid" id="homepage_after_login" style="padding: 0; height: 90%">
+  {% if wallpaper.photo %}
+  <img src="{{ wallpaper.photo }}" class="img-fluid">
+  {% else %}
+  <img src="{% static 'images/after_login.jpg' %}" class="img-fluid" alt="">
+  {% endif %}
 </div>
 {% endblock %}
