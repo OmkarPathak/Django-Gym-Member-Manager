@@ -18,6 +18,12 @@
           <h5 class="text-center"><strong>Mob:</strong> {{ user.mobile_number }}</h5>
           <hr>
           <h6 class="text-muted text-center">{{ user.address }}</h6>
+          <form method="POST" action="{% url 'update_member' user.member_id %}">
+            {% csrf_token %}
+            <div class="form-group text-center">
+              <input type="submit" class="btn btn-success" name="export" value="Export Data" />
+            </div>
+          </form>
         </div>
         <div class="col">
           {% if updated %}

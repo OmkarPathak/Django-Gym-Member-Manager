@@ -2,12 +2,27 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.core import serializers
 from .models import AddMemberForm, Member, SearchForm, UpdateMemberGymForm, UpdateMemberInfoForm
-import datetime
+import datetime, csv
+from django.http import HttpResponse
 import dateutil.relativedelta as delta
 import dateutil.parser as parser
 from django.core.files.storage import FileSystemStorage
 from payments.models import Payments
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+# Export user information.
+def export_all(user_obj):
+    response = HttpResponse(content_type='text/csv')
+    writer = csv.writer(response)
+    writer.writerow(['First name', 'Last name', 'Mobile', 'Admission Date', 'Subscription Type', 'Batch'])
+    members = user_obj.values_list('first_name', 'last_name', 'mobile_number', 'admitted_on', 'subscription_type', 'batch')
+    for user in members:
+        first_name = user[0]
+        last_name = user[1]
+        writer.writerow(user)
+
+    response['Content-Disposition'] = 'attachment; filename="' + first_name + ' ' + last_name + '.csv"'
+    return response
 
 # Get the count of notification (notification will be incremented if the user's fee due date is today!)
 subs_end_today_count = Member.objects.filter(
@@ -139,6 +154,8 @@ def update_member(request, id):
                                             registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
                                             notification=1
                                             ).count()
+    if request.method == 'POST' and request.POST.get('export'):
+        return export_all(Member.objects.filter(pk=id))
     if request.method == 'POST' and request.POST.get('gym_membership'):
         object = Member.objects.get(pk=id)
         object.registration_date =  request.POST.get('registration_date')
