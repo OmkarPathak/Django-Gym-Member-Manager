@@ -9,6 +9,7 @@ import dateutil.parser as parser
 from django.core.files.storage import FileSystemStorage
 from payments.models import Payments
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from notifications.config import get_notification_count, run_notifier
 
 # Export user information.
 def export_all(user_obj):
@@ -24,34 +25,15 @@ def export_all(user_obj):
     response['Content-Disposition'] = 'attachment; filename="' + first_name + ' ' + last_name + '.csv"'
     return response
 
-# Get the count of notification (notification will be incremented if the user's fee due date is today!)
-subs_end_today_count = Member.objects.filter(
-                                            registration_upto__lte=datetime.datetime.now(),
-                                            registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
-                                            notification=1
-                                            ).count()
-
 def members(request):
-    # Get the count of notification (notification will be incremented if the user's fee due date is today!)
-    subs_end_today_count = Member.objects.filter(
-                                            registration_upto__lte=datetime.datetime.now(),
-                                            registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
-                                            notification=1
-                                            ).count()
     form = AddMemberForm()
     context = {
         'form': form,
-        'subs_end_today_count': subs_end_today_count,
+        'subs_end_today_count': get_notification_count(),
     }
     return render(request, 'add_member.html', context)
 
 def view_member(request):
-    # Get the count of notification (notification will be incremented if the user's fee due date is today!)
-    subs_end_today_count = Member.objects.filter(
-                                            registration_upto__lte=datetime.datetime.now(),
-                                            registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
-                                            notification=1
-                                            ).count()
     view_all = Member.objects.all()
     paginator = Paginator(view_all, 100)
     try:
@@ -70,17 +52,20 @@ def view_member(request):
         'morning': morning,
         'evening': evening,
         'search_form': search_form,
-        'subs_end_today_count': subs_end_today_count,
+        'subs_end_today_count': get_notification_count(),
     }
     return render(request, 'view_member.html', context)
 
 def add_member(request):
     view_all = Member.objects.all()
     success = 0
+    member = None
     if request.method == 'POST':
         form = AddMemberForm(request.POST, request.FILES)
         if form.is_valid():
             temp = form.save(commit=False)
+            temp.first_name = request.POST.get('first_name').capitalize()
+            temp.last_name = request.POST.get('last_name').capitalize()
             temp.registration_upto = parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
             temp.save()
             success = 'Successfully Added Member'
@@ -95,18 +80,20 @@ def add_member(request):
                 payments.save()
 
             form = AddMemberForm()
-
+            member = Member.objects.last()
         context = {
             'add_success': success,
             'form': form,
-            'subs_end_today_count': subs_end_today_count,
+            'member': member,
+            'subs_end_today_count': get_notification_count(),
         }
+        run_notifier()
         return render(request, 'add_member.html', context)
     else:
         form = AddMemberForm()
         context = {
             'form': form,
-            'subs_end_today_count': subs_end_today_count,
+            'subs_end_today_count': get_notification_count(),
         }
     return render(request, 'add_member.html', context)
 
@@ -137,7 +124,7 @@ def search_member(request):
             'evening': evening,
             'search_form': search_form,
             'result': result,
-            'subs_end_today_count': subs_end_today_count,
+            'subs_end_today_count': get_notification_count(),
         }
         return render(request, 'view_member.html', context)
     else:
@@ -149,11 +136,6 @@ def delete_member(request, id):
     return redirect('view_member')
 
 def update_member(request, id):
-    subs_end_today_count = Member.objects.filter(
-                                            registration_upto__lte=datetime.datetime.now(),
-                                            registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
-                                            notification=1
-                                            ).count()
     if request.method == 'POST' and request.POST.get('export'):
         return export_all(Member.objects.filter(pk=id))
     if request.method == 'POST' and request.POST.get('gym_membership'):
@@ -166,6 +148,7 @@ def update_member(request, id):
         last_month = parser.parse(str(object.registration_upto)).month
         # check if user has modified only the date
         if (day != last_day and month == last_month) or (request.POST.get('fee_status') == 'pending'):
+            object.registration_date =  parser.parse(request.POST.get('registration_date')) - delta.relativedelta(months=1)
             object.registration_upto =  parser.parse(request.POST.get('registration_date'))
             object.fee_status = request.POST.get('fee_status')
             object.amount = request.POST.get('amount')
@@ -191,10 +174,6 @@ def update_member(request, id):
                                         payment_period=object.subscription_period,
                                         payment_amount=object.amount)
                     payments.save()
-        subs_end_today_count = Member.objects.filter(
-                                            registration_upto=datetime.datetime.now(),
-                                            notification=1
-                                            ).count()
         user = Member.objects.get(pk=id)
         gym_form = UpdateMemberGymForm(initial={
                                 'registration_date': user.registration_upto,
@@ -223,7 +202,7 @@ def update_member(request, id):
                 'info_form': info_form,
                 'user': user,
                 'updated': 'Record Updated Successfully',
-                'subs_end_today_count': subs_end_today_count,
+                'subs_end_today_count': get_notification_count(),
             })
     elif request.method == 'POST' and request.POST.get('info'):
         object = Member.objects.get(pk=id)
@@ -266,7 +245,7 @@ def update_member(request, id):
                 'info_form': info_form,
                 'user': user,
                 'updated': 'Record Updated Successfully',
-                'subs_end_today_count': subs_end_today_count,
+                'subs_end_today_count': get_notification_count(),
             })
     else:
         user = Member.objects.get(pk=id)
@@ -295,6 +274,6 @@ def update_member(request, id):
                         'gym_form': gym_form,
                         'info_form': info_form,
                         'user': user,
-                        'subs_end_today_count': subs_end_today_count,
+                        'subs_end_today_count': get_notification_count(),
                     }
                 )

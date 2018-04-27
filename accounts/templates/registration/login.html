@@ -6,6 +6,11 @@
 {% endblock %}
 
 {% block content %}
+{% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+        <div class="col-lg-6 col-md-6 offset-lg-3 offset-md-3 col-sm-12 col-xs-12 alert alert-danger">{{ error }}</div>
+    {% endfor %}
+{% endif %}
   <div class="col-lg-6 col-md-6 offset-lg-3 offset-md-3 col-sm-12 col-xs-12">
       <h2>Login</h2>
       <form method="post" class="form" action="{% url 'login' %}">

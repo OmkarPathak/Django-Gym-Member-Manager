@@ -5,6 +5,7 @@ import csv
 import datetime
 from .models import GenerateReportForm
 from django.db.models import Q
+from notifications.config import get_notification_count
 
 # Create your views here.
 def export_all(user_obj):
@@ -19,9 +20,6 @@ def export_all(user_obj):
     return response
 
 def reports(request):
-    subs_end_today_count = Member.objects.filter(
-                                                registration_upto=datetime.datetime.now(),
-                                                notification=1).count()
     if request.method == 'POST':
         form = GenerateReportForm(request.POST)
         if form.is_valid():
@@ -61,9 +59,9 @@ def reports(request):
                 'form': form,
                 # 'aggregate_amount': aggregate_amount,
                 # 'students_registered': len(reg_users),
-                'subs_end_today_count': subs_end_today_count,
+                'subs_end_today_count': get_notification_count(),
             }
             return render(request, 'reports.html', context)
     else:
         form = GenerateReportForm()
-    return render(request, 'reports.html', {'form': form, 'subs_end_today_count': subs_end_today_count,})
+    return render(request, 'reports.html', {'form': form, 'subs_end_today_count': get_notification_count(),})

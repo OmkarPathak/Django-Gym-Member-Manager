@@ -24,6 +24,7 @@ FEE_STATUS = (
 BATCH = (
 	('morning', 'Morning'),
 	('evening', 'Evening'),
+	('', 'All')
 )
 
 class Member(models.Model):
@@ -37,6 +38,7 @@ class Member(models.Model):
 	admitted_on = models.DateField(auto_now_add=True)
 	registration_date = models.DateField()
 	registration_upto = models.DateField()
+	dob = models.DateField(default=datetime.datetime.now())
 	subscription_type  = models.CharField(
 									max_length=30,
 									choices=SUBSCRIPTION_TYPE_CHOICES,
@@ -75,6 +77,7 @@ class AddMemberForm(ModelForm):
 		widgets = {
 			'registration_date': forms.DateInput(attrs={'type': 'date'}),
 			'registration_upto': forms.DateInput(attrs={'type': 'date'}),
+			'dob': forms.DateInput(attrs={'type': 'date'}),
 			'address': forms.Textarea(attrs={'cols': 80, 'rows': 3}),
 			'medical_history': forms.Textarea(attrs={'cols': 80, 'rows': 3}),
 		}
@@ -88,6 +91,19 @@ class AddMemberForm(ModelForm):
 				return mobile_number
 			else:
 				raise forms.ValidationError('Mobile number should be 10 digits long.')
+
+	def clean(self):
+		cleaned_data = super().clean()
+		dob = cleaned_data.get('dob')
+		first_name = cleaned_data.get('first_name').capitalize()
+		last_name = cleaned_data.get('last_name').capitalize()
+		queryset = Member.objects.filter(
+			first_name=first_name,
+			last_name=last_name,
+			dob=dob).count()
+		if queryset > 0:
+			raise forms.ValidationError('This member already exists!')
+
 
 class SearchForm(forms.Form):
 		search = forms.CharField(label='Search Member', max_length=100, required=False)

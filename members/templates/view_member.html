@@ -37,11 +37,11 @@
                 {{ search_form.search | add_css:"form-control" }}
             </div>
             <div class="{% if not result %} col {% endif %}">
-              <button type="submit" id="submit" class="btn btn-primary" style="margin-top: 35px;">Search</button>
+              <button type="submit" id="submit" class="btn btn-danger" style="margin-top: 35px;">Search</button>
             </div>
             {% if result %}
               <div class="col">
-                <button type="submit" id="clear" name="clear" class="btn btn-warning" style="margin-top: 35px;">Clear</button>
+                <button type="submit" id="clear" name="clear" class="btn btn-dark" style="margin-top: 35px;">Clear</button>
               </div>
             {% endif %}
         </div>
@@ -56,12 +56,14 @@
           <tr>
             <th scope="col">ID</th>
             <th scope="col">Name</th>
+            <th scope="col">DOB</th>
             <!-- <th scope="col">Photo</th> -->
             <th scope="col">Registration Date</th>
             <th scope="col">Registration Upto</th>
             <th scope="col">Subscription Type</th>
             <th scope="col">Subscription Period</th>
             <th scope="col">Fees</th>
+            <th scope="col">Delete User</th>
           </tr>
         </thead>
         <tbody class="text-center">
@@ -69,10 +71,11 @@
             <tr>
               <th scope="row">{{ forloop.counter }}</th>
               <td><a href="/members/update/{{ member.member_id }}">{{ member.first_name }} {{ member.last_name }}</a></td>
+              <td>{{ member.dob }}</td>
               <td>{{ member.registration_date }}</td>
               <td>{{ member.registration_upto }}</td>
               <td>{{ member.get_subscription_type_display }}</td>
-              <td>{{ member.subscription_period }}</td>
+              <td>{{ member.subscription_period }} Months</td>
               <td>
                   {% if member.fee_status == 'paid' %}
                   <span class="icon-checkmark" style="color: green"></span>
@@ -80,6 +83,7 @@
                   <span class="icon-cross" style="color: red"></span>
                   {% endif %}
               </td>
+              <td><a href="/members/delete/{{ member.member_id }}/"><button class="btn btn-danger">Delete</button></a></td>
             </tr>
           {% endfor %}
           </tbody>
@@ -106,6 +110,7 @@
               <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
+                <th scope="col">DOB</th>
                 <!-- <th scope="col">Photo</th> -->
                 <th scope="col">Registration Date</th>
                 <th scope="col">Registration Upto</th>
@@ -119,10 +124,11 @@
                 <tr>
                   <th scope="row">{{ forloop.counter }}</th>
                   <td><a href="/members/update/{{ member.member_id }}">{{ member.first_name }} {{ member.last_name }}</a></td>
+                  <td>{{ member.dob }}</td>
                   <td>{{ member.registration_date }}</td>
                   <td>{{ member.registration_upto }}</td>
                   <td>{{ member.get_subscription_type_display }}</td>
-                  <td>{{ member.subscription_period }}</td>
+                  <td>{{ member.subscription_period }} Months</td>
                   <td>
                       {% if member.fee_status == 'paid' %}
                       <span class="icon-checkmark" style="color: green"></span>
@@ -166,6 +172,7 @@
               <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
+                <th scope="col">DOB</th>
                 <!-- <th scope="col">Photo</th> -->
                 <th scope="col">Registration Date</th>
                 <th scope="col">Registration Upto</th>
@@ -179,10 +186,11 @@
                 <tr>
                   <th scope="row">{{ forloop.counter }}</th>
                   <td><a href="/members/update/{{ member.member_id }}">{{ member.first_name }} {{ member.last_name }}</a></td>
+                  <td>{{ member.dob }}</td>
                   <td>{{ member.registration_date }}</td>
                   <td>{{ member.registration_upto }}</td>
                   <td>{{ member.get_subscription_type_display }}</td>
-                  <td>{{ member.subscription_period }}</td>
+                  <td>{{ member.subscription_period }} Months</td>
                   <td>
                       {% if member.fee_status == 'paid' %}
                       <span class="icon-checkmark" style="color: green"></span>
@@ -203,6 +211,7 @@
               <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
+                <th scope="col">DOB</th>
                 <!-- <th scope="col">Photo</th> -->
                 <th scope="col">Registration Date</th>
                 <th scope="col">Registration Upto</th>
@@ -216,10 +225,11 @@
                 <tr>
                   <th scope="row">{{ forloop.counter }}</th>
                   <td><a href="/members/update/{{ member.member_id }}">{{ member.first_name }} {{ member.last_name }}</a></td>
+                  <td>{{ member.dob }}</td>
                   <td>{{ member.registration_date }}</td>
                   <td>{{ member.registration_upto }}</td>
                   <td>{{ member.get_subscription_type_display }}</td>
-                  <td>{{ member.subscription_period }}</td>
+                  <td>{{ member.subscription_period }} Months</td>
                   <td>
                       {% if member.fee_status == 'paid' %}
                       <span class="icon-checkmark" style="color: green"></span>

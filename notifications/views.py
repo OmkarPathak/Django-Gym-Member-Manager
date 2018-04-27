@@ -2,50 +2,22 @@ from django.shortcuts import render, redirect
 from members.models import Member, FEE_STATUS
 import datetime
 from django.db.models import Q
-
-query = Q(
-        Q(registration_upto__lte=datetime.datetime.now()),
-        Q(notification=2))
-query.add = Q(
-        Q(registration_upto__lte=datetime.datetime.now()),
-        Q(notification=0),
-        Q.OR)
+from .config import get_notification_count
 
 # Create your views here.
 def notifications(request):
-    # last_5_days = datetime.date.today() - datetime.timedelta(days=5)
-    members_before = Member.objects.filter(query)
-    members_today = Member.objects.filter(query)
-
-    # make notification flag to 1
-    for member in members_today:
-        if member.notification != 0:
-            member.notification = 1
-            member.fee_status = 'pending'
-            member.save()
-
-    for member in members_before:
-        if member.notification != 0:
-            member.notification = 1
-            member.fee_status = 'pending'
-            member.save()
-
     members_before = Member.objects.filter(
-                                        registration_upto__lt=datetime.datetime.now() - datetime.timedelta(days=2),
+                                        registration_upto__lte=datetime.datetime.now(),
                                         notification=1)
     members_today = Member.objects.filter(
-                                        registration_upto__lte=datetime.datetime.now(),
-                                        registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
+                                        registration_upto__gte=datetime.datetime.now(),
+                                        registration_upto__lte=datetime.date.today() + datetime.timedelta(days=1),
                                         notification=1)
-
-    subs_end_today_count = Member.objects.filter(
-                                        registration_upto__lte=datetime.datetime.now(),
-                                        registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
-                                        notification=1).count()
+    pending = Member.objects.filter(fee_status='pending')
     context = {
-        'subs_end_today_count': subs_end_today_count,
+        'subs_end_today_count': get_notification_count(),
         'members_today': members_today,
-        'members_before': members_before,
+        'members_before': members_before | pending,
     }
     # Entry.objects.filter(pub_date__date__gt=datetime.date(2005, 1, 1))
     return render(request, 'notifications.html', context)
@@ -55,18 +27,16 @@ def notification_delete(request, id):
     member.notification = 0
     member.save()
     members_before = Member.objects.filter(
-                                        registration_upto__lt=datetime.datetime.now(),
-                                        notification=2)
-    subs_end_today_count = Member.objects.filter(
-                                            registration_upto__lte=datetime.datetime.now(),
-                                            registration_upto__gte=datetime.date.today() - datetime.timedelta(days=2),
-                                            notification=1).count()
+                registration_upto__lte=datetime.datetime.now(),
+                notification=1)
     members_today = Member.objects.filter(
-                                        registration_upto__lte=datetime.datetime.now(),
-                                        notification=2)
+                registration_upto__gte=datetime.datetime.now(),
+                registration_upto__lte=datetime.date.today() + datetime.timedelta(days=1),
+                notification=1)
+    pending = Member.objects.filter(fee_status='pending')
 
     context = {
-        'subs_end_today_count': subs_end_today_count,
+        'subs_end_today_count': get_notification_count(),
         'members_today': members_today,
         'members_before': members_before,
     }

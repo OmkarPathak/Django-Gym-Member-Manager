@@ -17,7 +17,9 @@ class GenerateReports(models.Model):
     year = models.IntegerField(choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     batch = models.CharField(
                             max_length=30,
-                            choices=BATCH, blank=True)
+                            choices=BATCH,
+                            default=BATCH[2][0],
+                            blank=True)
 
 class GenerateReportForm(ModelForm):
     class Meta:
