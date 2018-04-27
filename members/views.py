@@ -193,7 +193,7 @@ def update_member(request, id):
             payments = Payments.objects.filter(user=user)
         except Payments.DoesNotExist:
             payments = 'No Records'
-
+        run_notifier()      # Update notification count
         return render(request,
             'update.html',
             {
