@@ -24,7 +24,6 @@ FEE_STATUS = (
 BATCH = (
 	('morning', 'Morning'),
 	('evening', 'Evening'),
-	('', 'All')
 )
 
 class Member(models.Model):
@@ -124,7 +123,7 @@ class SearchForm(forms.Form):
 			return search
 
 class UpdateMemberGymForm(forms.Form):
-	registration_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+	registration_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), disabled=True)
 	registration_upto = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 	subscription_type  = forms.ChoiceField(choices=SUBSCRIPTION_TYPE_CHOICES)
 	subscription_period = forms.ChoiceField(choices=SUBSCRIPTION_PERIOD_CHOICES)
@@ -134,4 +133,5 @@ class UpdateMemberGymForm(forms.Form):
 class UpdateMemberInfoForm(forms.Form):
 	first_name = forms.CharField(max_length=50)
 	last_name = forms.CharField(max_length=50)
+	batch = forms.ChoiceField(choices=BATCH)
 	photo = forms.FileField(label='Update Photo', required=False)

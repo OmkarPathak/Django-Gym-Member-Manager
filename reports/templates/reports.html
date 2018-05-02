@@ -54,7 +54,7 @@
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Name</th>
-              <!-- <th scope="col">Photo</th> -->
+              <th scope="col">DOB</th>
               <th scope="col">Registration Date</th>
               <th scope="col">Registration Upto</th>
               <th scope="col">Subscription Type</th>
@@ -65,6 +65,7 @@
               <tr>
                 <th scope="row">{{ forloop.counter }}</th>
                 <td><a href="/members/update/{{ member.member_id }}">{{ member.first_name }} {{ member.last_name }}</a></td>
+                <td>{{ member.dob }}</td>
                 <td>{{ member.registration_date }}</td>
                 <td>{{ member.registration_upto }}</td>
                 <td>{{ member.get_subscription_type_display }}</td>

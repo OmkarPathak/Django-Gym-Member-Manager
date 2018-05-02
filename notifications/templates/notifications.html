@@ -7,6 +7,7 @@
             <thead class="thead-dark">
                 <tr>
                     <th>Name</th>
+                    <th>DOB</th>
                     <th>Registration Date</th>
                     <th>Registration End</th>
                     <th>Subscription Type</th>
@@ -18,6 +19,7 @@
                 {% for member in members_today %}
                     <tr>
                         <td>{{ member.first_name }} {{ member.last_name }}</td>
+                        <td>{{ member.dob }}</td>
                         <td>{{ member.registration_date }}</td>
                         <td>{{ member.registration_upto }}</td>
                         <td>{{ member.get_subscription_type_display }}</td>
@@ -25,7 +27,7 @@
                             <a href="/members/update/{{ member.member_id }}/"><button class="btn btn-success">Edit</button>
                             </a>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <a href="/notifications/delete/{{ member.member_id }}/"><button class="btn btn-danger">Delete</button>
                             </a>
                         </td>
@@ -47,6 +49,7 @@
         <thead class="thead-dark">
             <tr>
                 <th>Name</th>
+                <th>DOB</th>
                 <th>Registration Date</th>
                 <th>Registration End</th>
                 <th>Subscription Type</th>
@@ -58,6 +61,7 @@
             {% for member in members_before %}
                 <tr>
                     <td>{{ member.first_name }} {{ member.last_name }}</td>
+                    <td>{{ member.dob }}</td>
                     <td>{{ member.registration_date }}</td>
                     <td>{{ member.registration_upto }}</td>
                     <td>{{ member.get_subscription_type_display }}</td>
@@ -65,7 +69,7 @@
                         <a href="/members/update/{{ member.member_id }}/"><button class="btn btn-success">Edit</button>
                         </a>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <a href="/notifications/delete/{{ member.member_id }}/"><button class="btn btn-danger">Delete</button>
                         </a>
                     </td>

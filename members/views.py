@@ -67,6 +67,9 @@ def add_member(request):
             temp.first_name = request.POST.get('first_name').capitalize()
             temp.last_name = request.POST.get('last_name').capitalize()
             temp.registration_upto = parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+            if request.POST.get('fee_status') == 'pending':
+                temp.notification = 1
+                run_notifier()
             temp.save()
             success = 'Successfully Added Member'
 
@@ -140,27 +143,34 @@ def update_member(request, id):
         return export_all(Member.objects.filter(pk=id))
     if request.method == 'POST' and request.POST.get('gym_membership'):
         object = Member.objects.get(pk=id)
-        object.registration_date =  request.POST.get('registration_date')
-        day = parser.parse(request.POST.get('registration_date')).day
+        amount = request.POST.get('amount')
+        day = (parser.parse(request.POST.get('registration_upto')) - delta.relativedelta(months=int(request.POST.get('subscription_period')))).day
         last_day = parser.parse(str(object.registration_upto)).day
 
-        month = parser.parse(request.POST.get('registration_date')).month
+        month = parser.parse(request.POST.get('registration_upto')).month
         last_month = parser.parse(str(object.registration_upto)).month
         # check if user has modified only the date
         if (day != last_day and month == last_month) or (request.POST.get('fee_status') == 'pending'):
-            object.registration_date =  parser.parse(request.POST.get('registration_date')) - delta.relativedelta(months=1)
-            object.registration_upto =  parser.parse(request.POST.get('registration_date'))
-            object.fee_status = request.POST.get('fee_status')
-            object.amount = request.POST.get('amount')
-            object.save()
+                object.registration_date =  parser.parse(request.POST.get('registration_upto')) - delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                object.registration_upto =  parser.parse(request.POST.get('registration_upto'))
+                object.fee_status = request.POST.get('fee_status')
+                object.notification = 1
+                object.amount = request.POST.get('amount')
+                object.save()
         else:
-            object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
-            object.subscription_type =  request.POST.get('subscription_type')
-            object.subscription_period =  request.POST.get('subscription_period')
-            object.fee_status = request.POST.get('fee_status')
-            object.amount =  request.POST.get('amount')
-            object.notification =  2
-            object.save()
+            if (object.amount != amount):
+                object.amount = amount
+                object.fee_status = request.POST.get('fee_status')
+                object.save()
+            else:
+                object.registration_date =  parser.parse(request.POST.get('registration_upto'))
+                object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                object.subscription_type =  request.POST.get('subscription_type')
+                object.subscription_period =  request.POST.get('subscription_period')
+                object.fee_status = request.POST.get('fee_status')
+                object.amount =  request.POST.get('amount')
+                object.notification =  2
+                object.save()
 
             # Add payments if payment is 'paid'
             if object.fee_status == 'paid':
@@ -176,7 +186,7 @@ def update_member(request, id):
                     payments.save()
         user = Member.objects.get(pk=id)
         gym_form = UpdateMemberGymForm(initial={
-                                'registration_date': user.registration_upto,
+                                'registration_date': user.registration_date,
                                 'registration_upto': user.registration_upto,
                                 'subscription_type': user.subscription_type,
                                 'subscription_period': user.subscription_period,
@@ -208,6 +218,7 @@ def update_member(request, id):
         object = Member.objects.get(pk=id)
         object.first_name = request.POST.get('first_name')
         object.last_name = request.POST.get('last_name')
+        object.batch = request.POST.get('batch')
 
         # for updating photo
         if 'photo' in request.FILES:
@@ -219,7 +230,7 @@ def update_member(request, id):
 
         user = Member.objects.get(pk=id)
         gym_form = UpdateMemberGymForm(initial={
-                                'registration_date': user.registration_upto,
+                                'registration_date': user.registration_date,
                                 'registration_upto': user.registration_upto,
                                 'subscription_type': user.subscription_type,
                                 'subscription_period': user.subscription_period,
@@ -230,6 +241,7 @@ def update_member(request, id):
         info_form = UpdateMemberInfoForm(initial={
                                 'first_name': user.first_name,
                                 'last_name': user.last_name,
+                                'batch': user.batch,
                                 })
 
         try:
@@ -255,7 +267,7 @@ def update_member(request, id):
         else:
             payments = 'No Records'
         gym_form = UpdateMemberGymForm(initial={
-                                'registration_date': user.registration_upto,
+                                'registration_date': user.registration_date,
                                 'registration_upto': user.registration_upto,
                                 'subscription_type': user.subscription_type,
                                 'subscription_period': user.subscription_period,
@@ -266,6 +278,7 @@ def update_member(request, id):
         info_form = UpdateMemberInfoForm(initial={
                                 'first_name': user.first_name,
                                 'last_name': user.last_name,
+                                'batch': user.batch,
                                 })
     return render(request,
                     'update.html',

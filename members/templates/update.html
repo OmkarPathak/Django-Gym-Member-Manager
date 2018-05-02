@@ -15,6 +15,8 @@
           <hr>
           <h4 class="text-center">Member Since:<div class="alert alert-info">{{ user.admitted_on }}</div></h4>
           <hr>
+          <h5 class="text-center"><strong>DOB:</strong> {{ user.dob }}</h5>
+          <hr>
           <h5 class="text-center"><strong>Mob:</strong> {{ user.mobile_number }}</h5>
           <hr>
           <h6 class="text-muted text-center">{{ user.address }}</h6>
@@ -47,21 +49,25 @@
               </div>
               <div class="row">
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <label for="registration_upto">{{ gym_form.registration_upto.label }}</label>
+                  <label for="registration_upto">Registration Date</label>
                   {{ gym_form.registration_date | add_css:"form-control" }}
                 </div>
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <label for="registration_upto">{{ gym_form.registration_upto.label }}</label>
+                  {{ gym_form.registration_upto | add_css:"form-control" }}
+                </div>
+              </div>
+              <div class="row">
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <label for="amount">{{ gym_form.amount.label }}</label>
                   {{ gym_form.amount | add_css:"form-control" }}
                 </div>
-              </div>
-              <div class="row">
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <label for="photo">{{ gym_form.fee_status.label }}</label>
                   {{ gym_form.fee_status | add_css:"form-control" }}
                 </div>
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <input type="submit" class="btn btn-primary" name="gym_membership" value="Update" style="margin-top: 9%;" />
+                  <input type="submit" class="btn btn-primary" name="gym_membership" value="Update" />
                 </div>
               </div>
             </form>
@@ -86,7 +92,11 @@
                   {{ info_form.photo | add_css:"form-control" }}
                 </div>
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <input type="submit" class="btn btn-primary" name="info" value="Update Info" style="margin-top: 10%;" />
+                  <label for="batch">{{ info_form.batch.label }}</label>
+                  {{ info_form.batch | add_css:"form-control" }}
+                </div>
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <input type="submit" class="btn btn-primary" name="info" value="Update Info" />
                 </div>
               </div>
             </form>
