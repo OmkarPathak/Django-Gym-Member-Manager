@@ -84,13 +84,13 @@ def add_member(request):
 
             form = AddMemberForm()
             member = Member.objects.last()
+        run_notifier()
         context = {
             'add_success': success,
             'form': form,
             'member': member,
             'subs_end_today_count': get_notification_count(),
         }
-        run_notifier()
         return render(request, 'add_member.html', context)
     else:
         form = AddMemberForm()

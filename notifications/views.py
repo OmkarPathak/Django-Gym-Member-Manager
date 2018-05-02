@@ -15,6 +15,7 @@ def notifications(request):
                                         registration_upto__lte=datetime.date.today() + datetime.timedelta(days=1),
                                         notification=1)
     pending = Member.objects.filter(fee_status='pending', notification=1)
+
     context = {
         'subs_end_today_count': get_notification_count(),
         'members_today': members_today,
