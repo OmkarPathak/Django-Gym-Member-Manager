@@ -33,7 +33,7 @@
               {{ updated }}
           </div>
           {% endif %}
-          <h2>Edit Gym Membership Information:</h2>
+          <h2>Edit Gym Membership Information: <a href="/members/delete/{{ user.member_id }}/" onclick="return confirm('Are you sure you want to delete this? This will permanently delete the record!')"><button class="btn btn-danger float-right">Delete Account</button></a></h2>
           <hr>
           <form method="POST" action="{% url 'update_member' user.member_id %}" style="margin-top: 2%" enctype="multipart/form-data">
               {% csrf_token %}

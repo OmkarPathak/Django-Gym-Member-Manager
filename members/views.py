@@ -150,10 +150,10 @@ def update_member(request, id):
         month = parser.parse(request.POST.get('registration_upto')).month
         last_month = parser.parse(str(object.registration_upto)).month
         # check if user has modified only the date
-        if (day != last_day and month == last_month):
-            object.registration_date =  parser.parse(request.POST.get('registration_upto')) - delta.relativedelta(months=int(request.POST.get('subscription_period')))
-            object.registration_upto =  parser.parse(request.POST.get('registration_upto'))
-            object.save()
+        if (datetime.datetime.strptime(str(object.registration_date), "%Y-%m-%d") != datetime.datetime.strptime(request.POST.get('registration_date'), "%Y-%m-%d")):
+                object.registration_date =  parser.parse(request.POST.get('registration_date'))
+                object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                object.save()
         elif (object.amount != amount) and (object.subscription_period != request.POST.get('subscription_period')):
             object.subscription_type =  request.POST.get('subscription_type')
             object.subscription_period =  request.POST.get('subscription_period')

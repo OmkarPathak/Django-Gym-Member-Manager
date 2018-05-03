@@ -7,6 +7,7 @@ SUBSCRIPTION_TYPE_CHOICES = (
     ('gym', 'Gym'),
     ('cross_fit', 'Cross Fit'),
     ('gym_and_cross_fit', 'Gym + Cross Fit'),
+    ('pt', 'Personal Training')
 )
 
 SUBSCRIPTION_PERIOD_CHOICES = (
@@ -123,7 +124,7 @@ class SearchForm(forms.Form):
 			return search
 
 class UpdateMemberGymForm(forms.Form):
-	registration_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), disabled=True)
+	registration_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 	registration_upto = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 	subscription_type  = forms.ChoiceField(choices=SUBSCRIPTION_TYPE_CHOICES)
 	subscription_period = forms.ChoiceField(choices=SUBSCRIPTION_PERIOD_CHOICES)
