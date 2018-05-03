@@ -151,12 +151,10 @@ def update_member(request, id):
         last_month = parser.parse(str(object.registration_upto)).month
         # check if user has modified only the date
         if (day != last_day and month == last_month):
-            print('Fakt date change')
             object.registration_date =  parser.parse(request.POST.get('registration_upto')) - delta.relativedelta(months=int(request.POST.get('subscription_period')))
             object.registration_upto =  parser.parse(request.POST.get('registration_upto'))
             object.save()
         elif (object.amount != amount) and (object.subscription_period != request.POST.get('subscription_period')):
-            print('amount c ani period c')
             object.subscription_type =  request.POST.get('subscription_type')
             object.subscription_period =  request.POST.get('subscription_period')
             object.registration_date =  parser.parse(request.POST.get('registration_upto'))
@@ -165,7 +163,6 @@ def update_member(request, id):
             object.amount =  request.POST.get('amount')
             object.save()
         elif (object.amount != amount) and (object.subscription_type != request.POST.get('subscription_type')):
-            print('amount c ani type c')
             object.subscription_type =  request.POST.get('subscription_type')
             object.subscription_period =  request.POST.get('subscription_period')
             object.registration_date =  parser.parse(request.POST.get('registration_upto'))
@@ -174,12 +171,10 @@ def update_member(request, id):
             object.amount =  request.POST.get('amount')
             object.save()
         elif (object.amount != amount) and (request.POST.get('fee_status') == 'paid'):
-            print('amount c ani status is paid')
             object.amount = amount
             object.fee_status = request.POST.get('fee_status')
             object.save()
         elif (object.amount != amount):
-            print('fakt amount c')
             object.registration_date =  parser.parse(request.POST.get('registration_upto'))
             object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
             object.fee_status = request.POST.get('fee_status')
@@ -190,7 +185,6 @@ def update_member(request, id):
                 object.notification = 2
             object.save()
         else:
-            print('else')
             object.registration_date =  parser.parse(request.POST.get('registration_upto'))
             object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
             object.fee_status = request.POST.get('fee_status')
