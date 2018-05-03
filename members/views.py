@@ -144,6 +144,8 @@ def update_member(request, id):
     if request.method == 'POST' and request.POST.get('gym_membership'):
         object = Member.objects.get(pk=id)
         amount = request.POST.get('amount')
+        object.subscription_type =  request.POST.get('subscription_type')
+        object.subscription_period =  request.POST.get('subscription_period')
         day = (parser.parse(request.POST.get('registration_upto')) - delta.relativedelta(months=int(request.POST.get('subscription_period')))).day
         last_day = parser.parse(str(object.registration_upto)).day
 
@@ -165,8 +167,6 @@ def update_member(request, id):
             else:
                 object.registration_date =  parser.parse(request.POST.get('registration_upto'))
                 object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
-                object.subscription_type =  request.POST.get('subscription_type')
-                object.subscription_period =  request.POST.get('subscription_period')
                 object.fee_status = request.POST.get('fee_status')
                 object.amount =  request.POST.get('amount')
                 object.notification =  2
