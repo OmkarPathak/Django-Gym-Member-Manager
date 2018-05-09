@@ -36,7 +36,7 @@ class Member(models.Model):
 	address = models.CharField(max_length=300, blank=True)
 	medical_history = models.CharField(max_length=300, blank=True, default='None')
 	admitted_on = models.DateField(auto_now_add=True)
-	registration_date = models.DateField()
+	registration_date = models.DateField(default='dd/mm/yyyy')
 	registration_upto = models.DateField()
 	dob = models.DateField(default='dd/mm/yyyy')
 	subscription_type  = models.CharField(
@@ -75,11 +75,10 @@ class AddMemberForm(ModelForm):
 		fields = '__all__'
 		exclude = ['registration_upto']
 		widgets = {
-			'registration_date': forms.DateInput(attrs={'type': 'date'}),
-			'registration_upto': forms.DateInput(attrs={'type': 'date'}),
-			'dob': forms.DateInput(attrs={'type': 'date'}),
+			'registration_date': forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}),
 			'address': forms.Textarea(attrs={'cols': 80, 'rows': 3}),
 			'medical_history': forms.Textarea(attrs={'cols': 80, 'rows': 3}),
+			'dob': forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'})
 		}
 
 	def clean_mobile_number(self, *args, **kwargs):
@@ -124,12 +123,18 @@ class SearchForm(forms.Form):
 			return search
 
 class UpdateMemberGymForm(forms.Form):
-	registration_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-	registration_upto = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+	registration_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}),)
+	registration_upto = forms.DateField(widget=forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}),)
 	subscription_type  = forms.ChoiceField(choices=SUBSCRIPTION_TYPE_CHOICES)
 	subscription_period = forms.ChoiceField(choices=SUBSCRIPTION_PERIOD_CHOICES)
 	fee_status = forms.ChoiceField(choices=FEE_STATUS)
-	amount = forms.IntegerField()
+	amount = forms.CharField()
+
+	def clean_amount(self):
+		amount = self.cleaned_data.get('amount')
+		if not amount.isdigit():
+			raise forms.ValidationError('Amount should be a number')
+		return amount
 
 class UpdateMemberInfoForm(forms.Form):
 	first_name = forms.CharField(max_length=50)

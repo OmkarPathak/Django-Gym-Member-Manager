@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.http import JsonResponse
 from django.core import serializers
 from .models import AddMemberForm, Member, SearchForm, UpdateMemberGymForm, UpdateMemberInfoForm
@@ -141,102 +141,129 @@ def delete_member(request, id):
 def update_member(request, id):
     if request.method == 'POST' and request.POST.get('export'):
         return export_all(Member.objects.filter(pk=id))
+    if request.method == 'POST' and request.POST.get('no'):
+        return redirect('/')
     if request.method == 'POST' and request.POST.get('gym_membership'):
-        object = Member.objects.get(pk=id)
-        amount = request.POST.get('amount')
-        day = (parser.parse(request.POST.get('registration_upto')) - delta.relativedelta(months=int(request.POST.get('subscription_period')))).day
-        last_day = parser.parse(str(object.registration_upto)).day
+            gym_form = UpdateMemberGymForm(request.POST)
+            if gym_form.is_valid():
+                object = Member.objects.get(pk=id)
+                amount = request.POST.get('amount')
+                day = (parser.parse(request.POST.get('registration_upto')) - delta.relativedelta(months=int(request.POST.get('subscription_period')))).day
+                last_day = parser.parse(str(object.registration_upto)).day
 
-        month = parser.parse(request.POST.get('registration_upto')).month
-        last_month = parser.parse(str(object.registration_upto)).month
-        # check if user has modified only the date
-        if (datetime.datetime.strptime(str(object.registration_date), "%Y-%m-%d") != datetime.datetime.strptime(request.POST.get('registration_date'), "%Y-%m-%d")):
-                object.registration_date =  parser.parse(request.POST.get('registration_date'))
-                object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
-                object.save()
-        elif (object.amount != amount) and (object.subscription_period != request.POST.get('subscription_period')):
-            object.subscription_type =  request.POST.get('subscription_type')
-            object.subscription_period =  request.POST.get('subscription_period')
-            object.registration_date =  parser.parse(request.POST.get('registration_upto'))
-            object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
-            object.fee_status = request.POST.get('fee_status')
-            object.amount =  request.POST.get('amount')
-            object.save()
-        elif (object.amount != amount) and (object.subscription_type != request.POST.get('subscription_type')):
-            object.subscription_type =  request.POST.get('subscription_type')
-            object.subscription_period =  request.POST.get('subscription_period')
-            object.registration_date =  parser.parse(request.POST.get('registration_upto'))
-            object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
-            object.fee_status = request.POST.get('fee_status')
-            object.amount =  request.POST.get('amount')
-            object.save()
-        elif (object.amount != amount) and (request.POST.get('fee_status') == 'paid'):
-            object.amount = amount
-            object.fee_status = request.POST.get('fee_status')
-            object.save()
-        elif (object.amount != amount):
-            object.registration_date =  parser.parse(request.POST.get('registration_upto'))
-            object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
-            object.fee_status = request.POST.get('fee_status')
-            object.amount =  request.POST.get('amount')
-            if request.POST.get('fee_status') == 'pending':
-                object.notification =  1
-            elif request.POST.get('fee_status') == 'paid':
-                object.notification = 2
-            object.save()
-        else:
-            object.registration_date =  parser.parse(request.POST.get('registration_upto'))
-            object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
-            object.fee_status = request.POST.get('fee_status')
-            object.amount =  request.POST.get('amount')
-            if request.POST.get('fee_status') == 'pending':
-                object.notification =  1
-            elif request.POST.get('fee_status') == 'paid':
-                object.notification = 2
-            object.save()
+                month = parser.parse(request.POST.get('registration_upto')).month
+                last_month = parser.parse(str(object.registration_upto)).month
+                # check if user has modified only the date
+                if (datetime.datetime.strptime(str(object.registration_date), "%Y-%m-%d") != datetime.datetime.strptime(request.POST.get('registration_date'), "%Y-%m-%d")):
+                        object.registration_date =  parser.parse(request.POST.get('registration_date'))
+                        object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                        object.save()
+                elif (object.amount != amount) and (object.subscription_period != request.POST.get('subscription_period')):
+                    object.subscription_type =  request.POST.get('subscription_type')
+                    object.subscription_period =  request.POST.get('subscription_period')
+                    object.registration_date =  parser.parse(request.POST.get('registration_upto'))
+                    object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                    object.fee_status = request.POST.get('fee_status')
+                    object.amount =  request.POST.get('amount')
+                    object.save()
+                elif (object.amount != amount) and (object.subscription_type != request.POST.get('subscription_type')):
+                    object.subscription_type =  request.POST.get('subscription_type')
+                    object.subscription_period =  request.POST.get('subscription_period')
+                    object.registration_date =  parser.parse(request.POST.get('registration_upto'))
+                    object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                    object.fee_status = request.POST.get('fee_status')
+                    object.amount =  request.POST.get('amount')
+                    object.save()
+                elif (object.amount != amount) and (request.POST.get('fee_status') == 'paid'):
+                    object.amount = amount
+                    object.fee_status = request.POST.get('fee_status')
+                    object.save()
+                elif (object.amount != amount):
+                    object.registration_date =  parser.parse(request.POST.get('registration_upto'))
+                    object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                    object.fee_status = request.POST.get('fee_status')
+                    object.amount =  request.POST.get('amount')
+                    if request.POST.get('fee_status') == 'pending':
+                        object.notification =  1
+                    elif request.POST.get('fee_status') == 'paid':
+                        object.notification = 2
+                    object.save()
+                else:
+                    object.registration_date =  parser.parse(request.POST.get('registration_upto'))
+                    object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                    object.fee_status = request.POST.get('fee_status')
+                    object.amount =  request.POST.get('amount')
+                    if request.POST.get('fee_status') == 'pending':
+                        object.notification =  1
+                    elif request.POST.get('fee_status') == 'paid':
+                        object.notification = 2
+                    object.save()
 
-        # Add payments if payment is 'paid'
-        if object.fee_status == 'paid':
-            check = Payments.objects.filter(
-                payment_date=object.registration_date,
-                user__pk=object.pk).count()
-            if check == 0:
-                payments = Payments(
-                                    user=object,
-                                    payment_date=object.registration_date,
-                                    payment_period=object.subscription_period,
-                                    payment_amount=object.amount)
-                payments.save()
-        user = Member.objects.get(pk=id)
-        gym_form = UpdateMemberGymForm(initial={
-                                'registration_date': user.registration_date,
-                                'registration_upto': user.registration_upto,
-                                'subscription_type': user.subscription_type,
-                                'subscription_period': user.subscription_period,
-                                'amount': user.amount,
-                                'fee_status': user.fee_status,
-                                })
+                # Add payments if payment is 'paid'
+                if object.fee_status == 'paid':
+                    check = Payments.objects.filter(
+                        payment_date=object.registration_date,
+                        user__pk=object.pk).count()
+                    if check == 0:
+                        payments = Payments(
+                                            user=object,
+                                            payment_date=object.registration_date,
+                                            payment_period=object.subscription_period,
+                                            payment_amount=object.amount)
+                        payments.save()
+                user = Member.objects.get(pk=id)
+                gym_form = UpdateMemberGymForm(initial={
+                                        'registration_date': user.registration_date,
+                                        'registration_upto': user.registration_upto,
+                                        'subscription_type': user.subscription_type,
+                                        'subscription_period': user.subscription_period,
+                                        'amount': user.amount,
+                                        'fee_status': user.fee_status,
+                                        })
 
-        info_form = UpdateMemberInfoForm(initial={
-                                'first_name': user.first_name,
-                                'last_name': user.last_name,
-                                })
+                info_form = UpdateMemberInfoForm(initial={
+                                        'first_name': user.first_name,
+                                        'last_name': user.last_name,
+                                        'batch': user.batch,
+                                        })
 
-        try:
-            payments = Payments.objects.filter(user=user)
-        except Payments.DoesNotExist:
-            payments = 'No Records'
-        run_notifier()      # Update notification count
-        return render(request,
-            'update.html',
-            {
-                'payments': payments,
-                'gym_form': gym_form,
-                'info_form': info_form,
-                'user': user,
-                'updated': 'Record Updated Successfully',
-                'subs_end_today_count': get_notification_count(),
-            })
+                try:
+                    payments = Payments.objects.filter(user=user)
+                except Payments.DoesNotExist:
+                    payments = 'No Records'
+                run_notifier()      # Update notification count
+                return render(request,
+                    'update.html',
+                    {
+                        'payments': payments,
+                        'gym_form': gym_form,
+                        'info_form': info_form,
+                        'user': user,
+                        'updated': 'Record Updated Successfully',
+                        'subs_end_today_count': get_notification_count(),
+                    })
+            else:
+                user = Member.objects.get(pk=id)
+                info_form = UpdateMemberInfoForm(initial={
+                                        'first_name': user.first_name,
+                                        'last_name': user.last_name,
+                                        'batch': user.batch,
+                                        })
+
+                try:
+                    payments = Payments.objects.filter(user=user)
+                except Payments.DoesNotExist:
+                    payments = 'No Records'
+                run_notifier()      # Update notification count
+                return render(request,
+                    'update.html',
+                    {
+                        'payments': payments,
+                        'gym_form': gym_form,
+                        'info_form': info_form,
+                        'user': user,
+                        'subs_end_today_count': get_notification_count(),
+                    })
     elif request.method == 'POST' and request.POST.get('info'):
         object = Member.objects.get(pk=id)
         object.first_name = request.POST.get('first_name')
@@ -303,13 +330,13 @@ def update_member(request, id):
                                 'last_name': user.last_name,
                                 'batch': user.batch,
                                 })
-    return render(request,
-                    'update.html',
-                    {
-                        'payments': payments,
-                        'gym_form': gym_form,
-                        'info_form': info_form,
-                        'user': user,
-                        'subs_end_today_count': get_notification_count(),
-                    }
-                )
+        return render(request,
+                        'update.html',
+                        {
+                            'payments': payments,
+                            'gym_form': gym_form,
+                            'info_form': info_form,
+                            'user': user,
+                            'subs_end_today_count': get_notification_count(),
+                        }
+                    )

@@ -33,7 +33,21 @@
               {{ updated }}
           </div>
           {% endif %}
-          <h2>Edit Gym Membership Information: <a href="/members/delete/{{ user.member_id }}/" onclick="return confirm('Are you sure you want to delete this? This will permanently delete the record!')"><button class="btn btn-danger float-right">Delete Account</button></a></h2>
+          {% if gym_form.errors %}
+              {% for field in gym_form %}
+                  {% for error in field.errors %}
+                      <div class="alert alert-danger">
+                          {{ error|escape }}
+                      </div>
+                  {% endfor %}
+              {% endfor %}
+              {% for error in gym_form.non_field_errors %}
+                  <div class="alert alert-danger">
+                      {{ error|escape }}
+                  </div>
+              {% endfor %}
+          {% endif %}
+          <h2>Edit Gym Membership Information: <button class="btn btn-warning" onclick="goBack()">Back</button> <a href="/members/delete/{{ user.member_id }}/" onclick="return confirm('Are you sure you want to delete this? This will permanently delete the record!')"><button class="btn btn-danger float-right">Delete Account</button></a></h2>
           <hr>
           <form method="POST" action="{% url 'update_member' user.member_id %}" style="margin-top: 2%" enctype="multipart/form-data">
               {% csrf_token %}
@@ -50,11 +64,11 @@
               <div class="row">
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <label for="registration_upto">Registration Date</label>
-                  {{ gym_form.registration_date | add_css:"form-control" }}
+                  {{ gym_form.registration_date }}
                 </div>
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <label for="registration_upto">{{ gym_form.registration_upto.label }}</label>
-                  {{ gym_form.registration_upto | add_css:"form-control" }}
+                  {{ gym_form.registration_upto }}
                 </div>
               </div>
               <div class="row">
@@ -136,4 +150,12 @@
         </div>
       </div>
     </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+function goBack() {
+    window.history.back();
+}
+</script>
 {% endblock %}
