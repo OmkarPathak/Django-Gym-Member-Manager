@@ -78,7 +78,8 @@ class AddMemberForm(ModelForm):
 			'registration_date': forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}),
 			'address': forms.Textarea(attrs={'cols': 80, 'rows': 3}),
 			'medical_history': forms.Textarea(attrs={'cols': 80, 'rows': 3}),
-			'dob': forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'})
+			'dob': forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}),
+			'photo': forms.FileInput(attrs={'accept': 'image/*;capture=camera'})
 		}
 
 	def clean_mobile_number(self, *args, **kwargs):

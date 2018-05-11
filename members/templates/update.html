@@ -47,7 +47,7 @@
                   </div>
               {% endfor %}
           {% endif %}
-          <h2>Edit Gym Membership Information: <button class="btn btn-warning" onclick="goBack()">Back</button> <a href="/members/delete/{{ user.member_id }}/" onclick="return confirm('Are you sure you want to delete this? This will permanently delete the record!')"><button class="btn btn-danger float-right">Delete Account</button></a></h2>
+          <h2>Edit Gym Membership Information: <button class="btn btn-dark" onclick="goBack()">Back</button> <a href="/members/delete/{{ user.member_id }}/" onclick="return confirm('Are you sure you want to delete this? This will permanently delete the record!')"><button class="btn btn-danger float-right">Delete Account</button></a></h2>
           <hr>
           <form method="POST" action="{% url 'update_member' user.member_id %}" style="margin-top: 2%" enctype="multipart/form-data">
               {% csrf_token %}
@@ -81,7 +81,7 @@
                   {{ gym_form.fee_status | add_css:"form-control" }}
                 </div>
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <input type="submit" class="btn btn-primary" name="gym_membership" value="Update" />
+                  <input type="submit" class="btn btn-dark" name="gym_membership" value="Update" />
                 </div>
               </div>
             </form>
@@ -110,7 +110,7 @@
                   {{ info_form.batch | add_css:"form-control" }}
                 </div>
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <input type="submit" class="btn btn-primary" name="info" value="Update Info" />
+                  <input type="submit" class="btn btn-dark" name="info" value="Update Info" />
                 </div>
               </div>
             </form>
