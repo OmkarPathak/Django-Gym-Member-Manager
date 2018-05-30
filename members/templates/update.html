@@ -20,12 +20,6 @@
           <h5 class="text-center"><strong>Mob:</strong> {{ user.mobile_number }}</h5>
           <hr>
           <h6 class="text-muted text-center">{{ user.address }}</h6>
-          <form method="POST" action="{% url 'update_member' user.member_id %}">
-            {% csrf_token %}
-            <div class="form-group text-center">
-              <input type="submit" class="btn btn-success" name="export" value="Export Data" />
-            </div>
-          </form>
         </div>
         <div class="col">
           {% if updated %}
@@ -47,7 +41,7 @@
                   </div>
               {% endfor %}
           {% endif %}
-          <h2>Edit Gym Membership Information: <button class="btn btn-dark" onclick="goBack()">Back</button> <a href="/members/delete/{{ user.member_id }}/" onclick="return confirm('Are you sure you want to delete this? This will permanently delete the record!')"><button class="btn btn-danger float-right">Delete Account</button></a></h2>
+          <h3>MEMBERSHIP INFORMATION: <button class="btn btn-dark float-right" onclick="goBack()">Back</button></h3>
           <hr>
           <form method="POST" action="{% url 'update_member' user.member_id %}" style="margin-top: 2%" enctype="multipart/form-data">
               {% csrf_token %}
@@ -80,13 +74,21 @@
                   <label for="photo">{{ gym_form.fee_status.label }}</label>
                   {{ gym_form.fee_status | add_css:"form-control" }}
                 </div>
+              </div>
+              <div class="row">
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <input type="submit" class="btn btn-dark" name="gym_membership" value="Update" />
+                  <label for="batch">{{ gym_form.batch.label }}</label>
+                  {{ gym_form.batch | add_css:"form-control" }}
+                </div>
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <input type="submit" class="btn btn-dark" name="gym_membership" value="Update" style="margin-top: 32px; margin-left: 140px;" />
+
+                  <a href="/members/delete/{{ user.member_id }}/" onclick="return confirm('Are you sure you want to delete this? This will permanently delete the record!')"><button class="btn btn-danger float-right" style="margin-top: 32px; margin-left: 20px">Delete Account</button></a>
                 </div>
               </div>
             </form>
 
-            <h2>Edit Personal Information:</h2>
+            <h3>PERSONAL INFORMATION:</h3>
             <hr>
             <form method="POST" action="{% url 'update_member' user.member_id %}" style="margin-top: 2%" enctype="multipart/form-data">
               {% csrf_token %}
@@ -106,11 +108,8 @@
                   {{ info_form.photo | add_css:"form-control" }}
                 </div>
                 <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <label for="batch">{{ info_form.batch.label }}</label>
-                  {{ info_form.batch | add_css:"form-control" }}
-                </div>
-                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <input type="submit" class="btn btn-dark" name="info" value="Update Info" />
+                  <input type="submit" class="btn btn-dark" name="info" value="Update Info" style="margin-top: 35px; margin-left: 135px" />
+                  <input type="submit" class="btn btn-danger float-right" name="export" value="Export Data"  style="margin-top: 35px;"/>
                 </div>
               </div>
             </form>

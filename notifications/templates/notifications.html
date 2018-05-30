@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
+{% load index %}
 
 {% block content %}
     <h3 style="margin-top: 3%; margin-bottom: 3%">Due Today</h3>
     {% if members_today %}
         <table class="table table-bordered">
-            <thead class="thead-dark">
+            <thead class="thead-dark text-center">
                 <tr>
                     <th>Name</th>
                     <th>DOB</th>
@@ -15,7 +16,7 @@
                     <th>Delete Notification</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="text-center">>
                 {% for member in members_today %}
                     <tr>
                         <td>{{ member.first_name }} {{ member.last_name }}</td>
@@ -46,18 +47,19 @@
     <h3>Past Dues</h3>
     {% if members_before %}
     <table class="table table-bordered">
-        <thead class="thead-dark">
+        <thead class="thead-dark text-center">
             <tr>
                 <th>Name</th>
                 <th>DOB</th>
                 <th>Registration Date</th>
                 <th>Registration End</th>
                 <th>Subscription Type</th>
+                <th>Pending Month</th>
                 <th>Edit</th>
                 <th>Delete Notification</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="text-center">
             {% for member in members_before %}
                 <tr>
                     <td>{{ member.first_name }} {{ member.last_name }}</td>
@@ -65,6 +67,7 @@
                     <td>{{ member.registration_date }}</td>
                     <td>{{ member.registration_upto }}</td>
                     <td>{{ member.get_subscription_type_display }}</td>
+                    <td>{{ pending_fee|get_at_index:forloop.counter0 }}</td>
                     <td>
                         <a href="/members/update/{{ member.member_id }}/"><button class="btn btn-success">Edit</button>
                         </a>
