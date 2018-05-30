@@ -11,20 +11,32 @@ from django.db.models.signals import post_save
 # Create your views here.
 def notifications(request):
     # run_notifier()
-    members_before = Member.objects.filter(
+    morning_members_before = Member.objects.filter(
                                         Q(registration_upto__lte=datetime.datetime.now(),
-                                        notification=1) |
-                                        Q(fee_status='pending', notification=1)
+                                        notification=1, batch='morning') |
+                                        Q(fee_status='pending', notification=1, batch='morning')
                                         ).exclude(stop=1).order_by('first_name')
-    members_today = Member.objects.filter(
+    morning_members_today = Member.objects.filter(
                                         registration_upto__gte=datetime.datetime.now(),
                                         registration_upto__lte=datetime.date.today() + datetime.timedelta(days=1),
-                                        notification=1).exclude(stop=1).order_by('first_name')
+                                        notification=1, batch='morning').exclude(stop=1).order_by('first_name')
+
+    evening_members_before = Member.objects.filter(
+                                        Q(registration_upto__lte=datetime.datetime.now(),
+                                        notification=1, batch='evening') |
+                                        Q(fee_status='pending', notification=1, batch='evening')
+                                        ).exclude(stop=1).order_by('first_name')
+    evening_members_today = Member.objects.filter(
+                                        registration_upto__gte=datetime.datetime.now(),
+                                        registration_upto__lte=datetime.date.today() + datetime.timedelta(days=1),
+                                        notification=1, batch='evening').exclude(stop=1).order_by('first_name')
 
     context = {
         'subs_end_today_count': get_notification_count(),
-        'members_today': members_today,
-        'members_before': members_before,
+        'morning_members_today': morning_members_today,
+        'morning_members_before': morning_members_before,
+        'evening_members_today': evening_members_today,
+        'evening_members_before': evening_members_before,
     }
     # Entry.objects.filter(pub_date__date__gt=datetime.date(2005, 1, 1))
     return render(request, 'notifications.html', context)

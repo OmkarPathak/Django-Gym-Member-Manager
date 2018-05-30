@@ -2,8 +2,61 @@
 {% load index %}
 
 {% block content %}
-    <h3 style="margin-top: 3%; margin-bottom: 3%">Due Today</h3>
-    {% if members_today %}
+    <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist" style="margin-top: 3%">
+      <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#morning" role="tab" aria-controls="home" aria-selected="true">Morning</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#evening" role="tab" aria-controls="profile" aria-selected="false">Evening</a>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="morning" role="tabpanel" aria-labelledby="home-tab">
+        <h3 style="margin-top: 3%; margin-bottom: 3%">Due Today</h3>
+        {% if morning_members_today %}
+            <table class="table table-bordered">
+                <thead class="thead-dark text-center">
+                    <tr>
+                        <th>Name</th>
+                        <th>DOB</th>
+                        <th>Registration Date</th>
+                        <th>Registration End</th>
+                        <th>Subscription Type</th>
+                        <th>Edit</th>
+                        <th>Delete Notification</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">>
+                    {% for member in morning_members_today %}
+                        <tr>
+                            <td>{{ member.first_name }} {{ member.last_name }}</td>
+                            <td>{{ member.dob }}</td>
+                            <td>{{ member.registration_date }}</td>
+                            <td>{{ member.registration_upto }}</td>
+                            <td>{{ member.get_subscription_type_display }}</td>
+                            <td>
+                                <a href="/members/update/{{ member.member_id }}/"><button class="btn btn-success">Edit</button>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="/notifications/delete/{{ member.member_id }}/"><button class="btn btn-danger">Delete</button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+        <div class="row text-center">
+            <div class="alert alert-warning col"> <strong>No Notifications</strong> </div>
+        </div>
+        {% endif %}
+
+        <hr>
+
+        <h3>Past Dues</h3>
+        {% if morning_members_before %}
         <table class="table table-bordered">
             <thead class="thead-dark text-center">
                 <tr>
@@ -12,18 +65,20 @@
                     <th>Registration Date</th>
                     <th>Registration End</th>
                     <th>Subscription Type</th>
+                    <th>Pending Month</th>
                     <th>Edit</th>
                     <th>Delete Notification</th>
                 </tr>
             </thead>
-            <tbody class="text-center">>
-                {% for member in members_today %}
+            <tbody class="text-center">
+                {% for member in morning_members_before %}
                     <tr>
                         <td>{{ member.first_name }} {{ member.last_name }}</td>
                         <td>{{ member.dob }}</td>
                         <td>{{ member.registration_date }}</td>
                         <td>{{ member.registration_upto }}</td>
                         <td>{{ member.get_subscription_type_display }}</td>
+                        <td>{{ member.registration_upto|get_remaining_months}}</td>
                         <td>
                             <a href="/members/update/{{ member.member_id }}/"><button class="btn btn-success">Edit</button>
                             </a>
@@ -36,54 +91,99 @@
                 {% endfor %}
             </tbody>
         </table>
-    {% else %}
-    <div class="row text-center">
-        <div class="alert alert-warning col"> <strong>No Notifications</strong> </div>
-    </div>
-    {% endif %}
 
-    <hr>
+        {% else %}
+        <div class="row text-center">
+            <div class="alert alert-warning col"> <strong>No Notifications</strong> </div>
+        </div>
+        {% endif %}
+      </div>
 
-    <h3>Past Dues</h3>
-    {% if members_before %}
-    <table class="table table-bordered">
-        <thead class="thead-dark text-center">
-            <tr>
-                <th>Name</th>
-                <th>DOB</th>
-                <th>Registration Date</th>
-                <th>Registration End</th>
-                <th>Subscription Type</th>
-                <th>Pending Month</th>
-                <th>Edit</th>
-                <th>Delete Notification</th>
-            </tr>
-        </thead>
-        <tbody class="text-center">
-            {% for member in members_before %}
+      <div class="tab-pane fade show" id="evening" role="tabpanel" aria-labelledby="home-tab">
+        <h3 style="margin-top: 3%; margin-bottom: 3%">Due Today</h3>
+        {% if evening_members_today %}
+            <table class="table table-bordered">
+                <thead class="thead-dark text-center">
+                    <tr>
+                        <th>Name</th>
+                        <th>DOB</th>
+                        <th>Registration Date</th>
+                        <th>Registration End</th>
+                        <th>Subscription Type</th>
+                        <th>Edit</th>
+                        <th>Delete Notification</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">>
+                    {% for member in evening_members_today %}
+                        <tr>
+                            <td>{{ member.first_name }} {{ member.last_name }}</td>
+                            <td>{{ member.dob }}</td>
+                            <td>{{ member.registration_date }}</td>
+                            <td>{{ member.registration_upto }}</td>
+                            <td>{{ member.get_subscription_type_display }}</td>
+                            <td>
+                                <a href="/members/update/{{ member.member_id }}/"><button class="btn btn-success">Edit</button>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="/notifications/delete/{{ member.member_id }}/"><button class="btn btn-danger">Delete</button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+        <div class="row text-center">
+            <div class="alert alert-warning col"> <strong>No Notifications</strong> </div>
+        </div>
+        {% endif %}
+
+        <hr>
+
+        <h3>Past Dues</h3>
+        {% if evening_members_before %}
+        <table class="table table-bordered">
+            <thead class="thead-dark text-center">
                 <tr>
-                    <td>{{ member.first_name }} {{ member.last_name }}</td>
-                    <td>{{ member.dob }}</td>
-                    <td>{{ member.registration_date }}</td>
-                    <td>{{ member.registration_upto }}</td>
-                    <td>{{ member.get_subscription_type_display }}</td>
-                    <td>{{ member.registration_upto|get_remaining_months}}</td>
-                    <td>
-                        <a href="/members/update/{{ member.member_id }}/"><button class="btn btn-success">Edit</button>
-                        </a>
-                    </td>
-                    <td class="text-center">
-                        <a href="/notifications/delete/{{ member.member_id }}/"><button class="btn btn-danger">Delete</button>
-                        </a>
-                    </td>
+                    <th>Name</th>
+                    <th>DOB</th>
+                    <th>Registration Date</th>
+                    <th>Registration End</th>
+                    <th>Subscription Type</th>
+                    <th>Pending Month</th>
+                    <th>Edit</th>
+                    <th>Delete Notification</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody class="text-center">
+                {% for member in evening_members_before %}
+                    <tr>
+                        <td>{{ member.first_name }} {{ member.last_name }}</td>
+                        <td>{{ member.dob }}</td>
+                        <td>{{ member.registration_date }}</td>
+                        <td>{{ member.registration_upto }}</td>
+                        <td>{{ member.get_subscription_type_display }}</td>
+                        <td>{{ member.registration_upto|get_remaining_months}}</td>
+                        <td>
+                            <a href="/members/update/{{ member.member_id }}/"><button class="btn btn-success">Edit</button>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="/notifications/delete/{{ member.member_id }}/"><button class="btn btn-danger">Delete</button>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    {% else %}
-    <div class="row text-center">
-        <div class="alert alert-warning col"> <strong>No Notifications</strong> </div>
+        {% else %}
+        <div class="row text-center">
+            <div class="alert alert-warning col"> <strong>No Notifications</strong> </div>
+        </div>
+        {% endif %}
+      </div>
     </div>
-    {% endif %}
 {% endblock %}
