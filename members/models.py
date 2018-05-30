@@ -30,6 +30,11 @@ FEE_STATUS = (
     ('pending', 'Pending'),
 )
 
+STATUS = (
+    (0, 'Start'),
+    (1, 'Stop'),
+)
+
 BATCH = (
     ('morning', 'Morning'),
     ('evening', 'Evening'),
@@ -73,6 +78,7 @@ class Member(models.Model):
                             )
     photo = models.FileField(upload_to='photos/', blank=True)
     notification = models.IntegerField(default=2, blank=True)
+    stop = models.IntegerField(('Status'), choices=STATUS, default=STATUS[0][0], blank=True)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -146,6 +152,7 @@ class UpdateMemberGymForm(forms.Form):
     fee_status = forms.ChoiceField(choices=FEE_STATUS)
     amount = forms.CharField()
     batch = forms.ChoiceField(choices=BATCH)
+    stop = forms.ChoiceField(label='Status', choices=STATUS)
 
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')

@@ -18,6 +18,10 @@ def model_save(model):
     model.save()
     post_save.connect(my_handler, sender=Member)
 
+def check_status(request, object):
+    object.stop = 1 if request.POST.get('stop') == '1' else 0
+    return object
+
 # Export user information.
 def export_all(user_obj):
     response = HttpResponse(content_type='text/csv')
@@ -162,11 +166,13 @@ def update_member(request, id):
                 last_month = parser.parse(str(object.registration_upto)).month
                 if (object.batch != request.POST.get('batch')):
                     object.batch = request.POST.get('batch')
+                    object = check_status(request, object)
                     model_save(object)
                 # check if user has modified only the date
                 elif (datetime.datetime.strptime(str(object.registration_date), "%Y-%m-%d") != datetime.datetime.strptime(request.POST.get('registration_date'), "%Y-%m-%d")):
                         object.registration_date =  parser.parse(request.POST.get('registration_date'))
                         object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                        object = check_status(request, object)
                         model_save(object)
                 # if amount and period are changed
                 elif (object.amount != amount) and (object.subscription_period != request.POST.get('subscription_period')):
@@ -176,6 +182,7 @@ def update_member(request, id):
                     object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
                     object.fee_status = request.POST.get('fee_status')
                     object.amount =  request.POST.get('amount')
+                    object = check_status(request, object)
                     model_save(object)
                 # if amount and type are changed
                 elif (object.amount != amount) and (object.subscription_type != request.POST.get('subscription_type')):
@@ -185,11 +192,13 @@ def update_member(request, id):
                     object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
                     object.fee_status = request.POST.get('fee_status')
                     object.amount =  request.POST.get('amount')
+                    object = check_status(request, object)
                     model_save(object)
                 # if amount ad fee status are changed
                 elif (object.amount != amount) and ((request.POST.get('fee_status') == 'paid') or (request.POST.get('fee_status') == 'pending')):
                         object.amount = amount
                         object.fee_status = request.POST.get('fee_status')
+                        object = check_status(request, object)
                         model_save(object)
                 # if only amount is channged
                 elif (object.amount != amount):
@@ -201,6 +210,7 @@ def update_member(request, id):
                         object.notification =  1
                     elif request.POST.get('fee_status') == 'paid':
                         object.notification = 2
+                    object = check_status(request, object)
                     model_save(object)
                 # nothing is changed
                 else:
@@ -212,6 +222,7 @@ def update_member(request, id):
                         object.notification =  1
                     elif request.POST.get('fee_status') == 'paid':
                         object.notification = 2
+                    object = check_status(request, object)
                     model_save(object)
 
                 # Add payments if payment is 'paid'
@@ -235,11 +246,13 @@ def update_member(request, id):
                                         'amount': user.amount,
                                         'fee_status': user.fee_status,
                                         'batch': user.batch,
+                                        'stop': user.stop,
                                         })
 
                 info_form = UpdateMemberInfoForm(initial={
                                         'first_name': user.first_name,
                                         'last_name': user.last_name,
+                                        'dob': user.dob,
                                         })
 
                 try:
@@ -252,6 +265,7 @@ def update_member(request, id):
                 info_form = UpdateMemberInfoForm(initial={
                                         'first_name': user.first_name,
                                         'last_name': user.last_name,
+                                        'dob': user.dob,
                                         })
 
                 try:
@@ -290,6 +304,7 @@ def update_member(request, id):
                                 'amount': user.amount,
                                 'fee_status': user.fee_status,
                                 'batch': user.batch,
+                                'stop': user.stop,
                                 })
 
         info_form = UpdateMemberInfoForm(initial={
@@ -328,6 +343,7 @@ def update_member(request, id):
                                 'amount': user.amount,
                                 'fee_status': user.fee_status,
                                 'batch': user.batch,
+                                'stop': user.stop,
                                 })
 
         info_form = UpdateMemberInfoForm(initial={

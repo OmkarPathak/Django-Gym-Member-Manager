@@ -15,11 +15,11 @@ def notifications(request):
                                         Q(registration_upto__lte=datetime.datetime.now(),
                                         notification=1) |
                                         Q(fee_status='pending', notification=1)
-                                        ).order_by('first_name')
+                                        ).exclude(stop=1).order_by('first_name')
     members_today = Member.objects.filter(
                                         registration_upto__gte=datetime.datetime.now(),
                                         registration_upto__lte=datetime.date.today() + datetime.timedelta(days=1),
-                                        notification=1).order_by('first_name')
+                                        notification=1).exclude(stop=1).order_by('first_name')
 
     context = {
         'subs_end_today_count': get_notification_count(),
