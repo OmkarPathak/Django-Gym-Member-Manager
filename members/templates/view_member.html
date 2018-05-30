@@ -122,7 +122,7 @@
             <tbody class="text-center">
               {% for member in all %}
                 <tr>
-                  <th scope="row">{{ forloop.counter }}</th>
+                  <th scope="row">{{ all.start_index|add:forloop.counter0  }}</th>
                   <td><a href="/members/update/{{ member.member_id }}">{{ member.first_name }} {{ member.last_name }}</a></td>
                   <td>{{ member.dob }}</td>
                   <td>{{ member.registration_date }}</td>

@@ -9,7 +9,14 @@ import dateutil.parser as parser
 from django.core.files.storage import FileSystemStorage
 from payments.models import Payments
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from notifications.config import get_notification_count, run_notifier
+from notifications.config import get_notification_count
+from django.db.models.signals import post_save
+from notifications.views import my_handler
+
+def model_save(model):
+    post_save.disconnect(my_handler, sender=Member)
+    model.save()
+    post_save.connect(my_handler, sender=Member)
 
 # Export user information.
 def export_all(user_obj):
@@ -34,7 +41,7 @@ def members(request):
     return render(request, 'add_member.html', context)
 
 def view_member(request):
-    view_all = Member.objects.all()
+    view_all = Member.objects.all().order_by('first_name')
     paginator = Paginator(view_all, 100)
     try:
         page = request.GET.get('page', 1)
@@ -45,8 +52,8 @@ def view_member(request):
         view_all = paginator.page(paginator.num_pages)
     search_form = SearchForm()
     # get all members according to their batches
-    evening = Member.objects.filter(batch='evening')
-    morning = Member.objects.filter(batch='morning')
+    evening = Member.objects.filter(batch='evening').order_by('first_name')
+    morning = Member.objects.filter(batch='morning').order_by('first_name')
     context = {
         'all': view_all,
         'morning': morning,
@@ -69,8 +76,8 @@ def add_member(request):
             temp.registration_upto = parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
             if request.POST.get('fee_status') == 'pending':
                 temp.notification = 1
-                run_notifier()
-            temp.save()
+
+            model_save(temp)
             success = 'Successfully Added Member'
 
             # Add payments if payment is 'paid'
@@ -84,7 +91,7 @@ def add_member(request):
 
             form = AddMemberForm()
             member = Member.objects.last()
-        run_notifier()
+
         context = {
             'add_success': success,
             'form': form,
@@ -155,12 +162,12 @@ def update_member(request, id):
                 last_month = parser.parse(str(object.registration_upto)).month
                 if (object.batch != request.POST.get('batch')):
                     object.batch = request.POST.get('batch')
-                    object.save()
+                    model_save(object)
                 # check if user has modified only the date
                 elif (datetime.datetime.strptime(str(object.registration_date), "%Y-%m-%d") != datetime.datetime.strptime(request.POST.get('registration_date'), "%Y-%m-%d")):
                         object.registration_date =  parser.parse(request.POST.get('registration_date'))
                         object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
-                        object.save()
+                        model_save(object)
                 # if amount and period are changed
                 elif (object.amount != amount) and (object.subscription_period != request.POST.get('subscription_period')):
                     object.subscription_type =  request.POST.get('subscription_type')
@@ -169,7 +176,7 @@ def update_member(request, id):
                     object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
                     object.fee_status = request.POST.get('fee_status')
                     object.amount =  request.POST.get('amount')
-                    object.save()
+                    model_save(object)
                 # if amount and type are changed
                 elif (object.amount != amount) and (object.subscription_type != request.POST.get('subscription_type')):
                     object.subscription_type =  request.POST.get('subscription_type')
@@ -178,12 +185,12 @@ def update_member(request, id):
                     object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
                     object.fee_status = request.POST.get('fee_status')
                     object.amount =  request.POST.get('amount')
-                    object.save()
+                    model_save(object)
                 # if amount ad fee status are changed
-                elif (object.amount != amount) and (request.POST.get('fee_status') == 'paid'):
-                    object.amount = amount
-                    object.fee_status = request.POST.get('fee_status')
-                    object.save()
+                elif (object.amount != amount) and ((request.POST.get('fee_status') == 'paid') or (request.POST.get('fee_status') == 'pending')):
+                        object.amount = amount
+                        object.fee_status = request.POST.get('fee_status')
+                        model_save(object)
                 # if only amount is channged
                 elif (object.amount != amount):
                     object.registration_date =  parser.parse(request.POST.get('registration_upto'))
@@ -194,7 +201,7 @@ def update_member(request, id):
                         object.notification =  1
                     elif request.POST.get('fee_status') == 'paid':
                         object.notification = 2
-                    object.save()
+                    model_save(object)
                 # nothing is changed
                 else:
                     object.registration_date =  parser.parse(request.POST.get('registration_upto'))
@@ -205,7 +212,7 @@ def update_member(request, id):
                         object.notification =  1
                     elif request.POST.get('fee_status') == 'paid':
                         object.notification = 2
-                    object.save()
+                    model_save(object)
 
                 # Add payments if payment is 'paid'
                 if object.fee_status == 'paid':
@@ -239,7 +246,6 @@ def update_member(request, id):
                     payments = Payments.objects.filter(user=user)
                 except Payments.DoesNotExist:
                     payments = 'No Records'
-                run_notifier()      # Update notification count
                 return redirect(reverse('homepage_after_login'))
             else:
                 user = Member.objects.get(pk=id)
@@ -252,7 +258,6 @@ def update_member(request, id):
                     payments = Payments.objects.filter(user=user)
                 except Payments.DoesNotExist:
                     payments = 'No Records'
-                run_notifier()      # Update notification count
                 return render(request,
                     'update.html',
                     {
@@ -266,6 +271,7 @@ def update_member(request, id):
         object = Member.objects.get(pk=id)
         object.first_name = request.POST.get('first_name')
         object.last_name = request.POST.get('last_name')
+        object.dob = request.POST.get('dob')
 
         # for updating photo
         if 'photo' in request.FILES:
@@ -273,7 +279,7 @@ def update_member(request, id):
             fs = FileSystemStorage(base_url="")
             photo = fs.save(myfile.name, myfile)
             object.photo = fs.url(photo)
-        object.save()
+        model_save(object)
 
         user = Member.objects.get(pk=id)
         gym_form = UpdateMemberGymForm(initial={
@@ -289,6 +295,7 @@ def update_member(request, id):
         info_form = UpdateMemberInfoForm(initial={
                                 'first_name': user.first_name,
                                 'last_name': user.last_name,
+                                'dob': user.dob,
                                 })
 
         try:
@@ -326,6 +333,7 @@ def update_member(request, id):
         info_form = UpdateMemberInfoForm(initial={
                                 'first_name': user.first_name,
                                 'last_name': user.last_name,
+                                'dob': user.dob,
                                 })
         return render(request,
                         'update.html',

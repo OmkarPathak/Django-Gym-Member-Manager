@@ -67,7 +67,7 @@
                     <td>{{ member.registration_date }}</td>
                     <td>{{ member.registration_upto }}</td>
                     <td>{{ member.get_subscription_type_display }}</td>
-                    <td>{{ pending_fee|get_at_index:forloop.counter0 }}</td>
+                    <td>{{ member.registration_upto|get_remaining_months}}</td>
                     <td>
                         <a href="/members/update/{{ member.member_id }}/"><button class="btn btn-success">Edit</button>
                         </a>

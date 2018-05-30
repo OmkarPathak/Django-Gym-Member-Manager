@@ -7,13 +7,12 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.core.files.storage import FileSystemStorage
 from .models import Wallpaper, WallpaperForm
 from django.conf import settings
-from notifications.config import get_notification_count, run_notifier
+from notifications.config import get_notification_count
 
 def homepage(request):
     return render(request, 'homepage.html')
 
 def homepage_after_login(request):
-    run_notifier()
     if not Wallpaper.objects.filter()[:1].exists():
         return render(request, 'homepage_after_login.html')
     else:
