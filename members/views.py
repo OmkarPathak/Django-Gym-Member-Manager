@@ -46,7 +46,7 @@ def members(request):
     return render(request, 'add_member.html', context)
 
 def view_member(request):
-    view_all = Member.objects.all().order_by('first_name')
+    view_all = Member.objects.filter(stop=0).order_by('first_name')
     paginator = Paginator(view_all, 100)
     try:
         page = request.GET.get('page', 1)
@@ -57,12 +57,14 @@ def view_member(request):
         view_all = paginator.page(paginator.num_pages)
     search_form = SearchForm()
     # get all members according to their batches
-    evening = Member.objects.filter(batch='evening').order_by('first_name')
-    morning = Member.objects.filter(batch='morning').order_by('first_name')
+    evening = Member.objects.filter(batch='evening', stop=0).order_by('first_name')
+    morning = Member.objects.filter(batch='morning', stop=0).order_by('first_name')
+    stopped = Member.objects.filter(stop=1).order_by('first_name')
     context = {
         'all': view_all,
         'morning': morning,
         'evening': evening,
+        'stopped': stopped,
         'search_form': search_form,
         'subs_end_today_count': get_notification_count(),
     }
@@ -165,9 +167,11 @@ def update_member(request, id):
 
                 month = parser.parse(request.POST.get('registration_upto')).month
                 last_month = parser.parse(str(object.registration_upto)).month
+                # if status is stopped then do not update anything
                 if object.stop == 1 and not request.POST.get('stop') == '0' and request.POST.get('gym_membership'):
                     messages.error(request, 'Please start the status of user to update the record')
                     return redirect('update_member', id=object.pk)
+                # to change only the batch
                 elif (object.batch != request.POST.get('batch')):
                     object.batch = request.POST.get('batch')
                     object = check_status(request, object)
@@ -224,14 +228,15 @@ def update_member(request, id):
                     model_save(object)
                 # nothing is changed
                 else:
-                    object.registration_date =  parser.parse(request.POST.get('registration_upto'))
-                    object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                    if not request.POST.get('stop') == '1':
+                        object.registration_date =  parser.parse(request.POST.get('registration_upto'))
+                        object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                        object.amount =  request.POST.get('amount')
+                        if request.POST.get('fee_status') == 'pending':
+                            object.notification =  1
+                        elif request.POST.get('fee_status') == 'paid':
+                            object.notification = 2
                     object.fee_status = request.POST.get('fee_status')
-                    object.amount =  request.POST.get('amount')
-                    if request.POST.get('fee_status') == 'pending':
-                        object.notification =  1
-                    elif request.POST.get('fee_status') == 'paid':
-                        object.notification = 2
                     object = check_status(request, object)
                     model_save(object)
 

@@ -20,7 +20,7 @@
         <div class="modal-content">
           <div class="modal-body">
             <div class="container text-center">
-              <div class="alert alert-success" style="margin-bottom: 0">
+              <div class="alert alert-dark" style="margin-bottom: 0">
                 <p style="margin-bottom: 0">{{ add_success }}</p>
                 <form method="POST" action="{% url 'update_member' member.member_id %}">
                   {% csrf_token %}

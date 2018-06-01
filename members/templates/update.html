@@ -10,7 +10,7 @@
             <div class="container text-center">
                 <div class="messages">
                     {% for message in messages %}
-                    <div{% if message.tags == 'error' %} class="alert alert-danger" {% else %} class="alert alert-{{ message.tags }} "{% endif %}>
+                    <div{% if message.tags == 'error' %} class="alert alert-dark" {% else %} class="alert alert-{{ message.tags }} "{% endif %}>
                         {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
                         {{ message }}
                     </div>
