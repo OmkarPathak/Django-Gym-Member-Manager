@@ -11,7 +11,8 @@ from payments.models import Payments
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from notifications.config import get_notification_count
 from django.db.models.signals import post_save
-from notifications.views import my_handler
+from notifications.config import my_handler
+from django.contrib import messages
 
 def model_save(model):
     post_save.disconnect(my_handler, sender=Member)
@@ -164,7 +165,10 @@ def update_member(request, id):
 
                 month = parser.parse(request.POST.get('registration_upto')).month
                 last_month = parser.parse(str(object.registration_upto)).month
-                if (object.batch != request.POST.get('batch')):
+                if object.stop == 1 and not request.POST.get('stop') == '0' and request.POST.get('gym_membership'):
+                    messages.error(request, 'Please start the status of user to update the record')
+                    return redirect('update_member', id=object.pk)
+                elif (object.batch != request.POST.get('batch')):
                     object.batch = request.POST.get('batch')
                     object = check_status(request, object)
                     model_save(object)
@@ -172,6 +176,7 @@ def update_member(request, id):
                 elif (datetime.datetime.strptime(str(object.registration_date), "%Y-%m-%d") != datetime.datetime.strptime(request.POST.get('registration_date'), "%Y-%m-%d")):
                         object.registration_date =  parser.parse(request.POST.get('registration_date'))
                         object.registration_upto =  parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+                        object.fee_status = request.POST.get('fee_status')
                         object = check_status(request, object)
                         model_save(object)
                 # if amount and period are changed
@@ -182,6 +187,11 @@ def update_member(request, id):
                     object.registration_upto =  parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
                     object.fee_status = request.POST.get('fee_status')
                     object.amount =  request.POST.get('amount')
+                    object = check_status(request, object)
+                    model_save(object)
+                # if only subscription_period is Changed
+                elif (object.subscription_period != request.POST.get('subscription_period')):
+                    object.subscription_period =  request.POST.get('subscription_period')
                     object = check_status(request, object)
                     model_save(object)
                 # if amount and type are changed

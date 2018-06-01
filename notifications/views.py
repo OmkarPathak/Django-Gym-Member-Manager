@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect
 from members.models import Member, FEE_STATUS
 import datetime
 from django.db.models import Q
-from .config import get_notification_count
+from .config import get_notification_count, run_notifier
 import dateutil.relativedelta as delta
 import dateutil.parser as parser
 import datetime
-from django.db.models.signals import post_save
+# from django.db.models.signals import post_save, pre_save
 
 # Create your views here.
 def notifications(request):
@@ -18,7 +18,7 @@ def notifications(request):
                                         ).exclude(stop=1).order_by('first_name')
     morning_members_today = Member.objects.filter(
                                         registration_upto__gte=datetime.datetime.now(),
-                                        registration_upto__lte=datetime.date.today() + datetime.timedelta(days=1),
+                                        registration_upto__lte=datetime.date.today() + datetime.timedelta(days=2),
                                         notification=1, batch='morning').exclude(stop=1).order_by('first_name')
 
     evening_members_before = Member.objects.filter(
@@ -28,7 +28,7 @@ def notifications(request):
                                         ).exclude(stop=1).order_by('first_name')
     evening_members_today = Member.objects.filter(
                                         registration_upto__gte=datetime.datetime.now(),
-                                        registration_upto__lte=datetime.date.today() + datetime.timedelta(days=1),
+                                        registration_upto__lte=datetime.date.today() + datetime.timedelta(days=2),
                                         notification=1, batch='evening').exclude(stop=1).order_by('first_name')
 
     context = {
@@ -49,24 +49,5 @@ def notification_delete(request, id):
     post_save.connect(my_handler, sender=Member)
     return redirect('/notifications/')
 
-def my_handler(sender, instance, created, **kwargs):
-    query = Q(
-            Q(registration_upto__gte=datetime.datetime.today()),
-            Q(registration_upto__lte=datetime.datetime.today() + datetime.timedelta(days=1)),
-            Q(Q(notification=2) | Q(notification=0)))
-
-    # last_5_days = datetime.date.today() - datetime.timedelta(days=5)
-    members_before = Member.objects.filter(
-        registration_upto__lte=datetime.datetime.today())
-    members_today = Member.objects.filter(query)
-
-    count = 0
-    # make notification flag to 1
-    for member in members_today | members_before:
-        if member.notification != 0:
-            member.notification = 1
-            member.fee_status = 'pending'
-            member.save()
-    return
-
-post_save.connect(my_handler, sender=Member)
+# post_save.connect(my_handler, sender=Member)
+# pre_save.connect(run_notifier, sender=Member)
