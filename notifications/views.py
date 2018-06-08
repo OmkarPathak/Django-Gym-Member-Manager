@@ -44,6 +44,7 @@ def notifications(request):
 def notification_delete(request, id):
     member = Member.objects.get(pk=id)
     member.notification = 0
+    member.stop = 1
     post_save.disconnect(my_handler, sender=Member)
     member.save()
     post_save.connect(my_handler, sender=Member)

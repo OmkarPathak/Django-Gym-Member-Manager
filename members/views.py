@@ -274,7 +274,8 @@ def update_member(request, id):
                     payments = Payments.objects.filter(user=user)
                 except Payments.DoesNotExist:
                     payments = 'No Records'
-                return redirect(reverse('homepage_after_login'))
+                messages.success(request, 'Record updated successfully!')
+                return redirect('update_member', id=user.pk)
             else:
                 user = Member.objects.get(pk=id)
                 info_form = UpdateMemberInfoForm(initial={

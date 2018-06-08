@@ -51,3 +51,12 @@ input[type=date]::-webkit-inner-spin-button,
 input[type=date]::-webkit-outer-spin-button {
   -webkit-appearance: none;
 }
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link{
+color: black;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+color: red;
+font-weight: bold;
+}

@@ -34,8 +34,8 @@ def run_notifier(**kwargs):
 
     # last_5_days = datetime.date.today() - datetime.timedelta(days=5)
     members_before = Member.objects.filter(
-        registration_upto__lte=datetime.datetime.today())
-    members_today = Member.objects.filter(query)
+        registration_upto__lte=datetime.datetime.today()).exclude(stop=1)
+    members_today = Member.objects.filter(query).exclude(stop=1)
 
     count = 0
     # make notification flag to 1
