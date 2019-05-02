@@ -6,7 +6,8 @@ from .config import get_notification_count, run_notifier
 import dateutil.relativedelta as delta
 import dateutil.parser as parser
 import datetime
-# from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save
+from .config import my_handler
 
 # Create your views here.
 def notifications(request):

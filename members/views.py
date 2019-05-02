@@ -149,6 +149,7 @@ def search_member(request):
     return render(request, 'view_member.html', {'search_form': search_form})
 
 def delete_member(request, id):
+    print(id)
     Member.objects.filter(pk=id).delete()
     return redirect('view_member')
 

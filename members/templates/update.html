@@ -105,10 +105,11 @@
                   <label for="stop">{{ gym_form.stop.label }}</label>
                   {{ gym_form.stop | add_css:"form-control" }}
                 </div>
-                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group col-lg-3 col-md-3 col-sm-12 col-xs-12">
                   <input type="submit" class="btn btn-dark" name="gym_membership" value="Update" style="margin-top: 32px; margin-left: 140px;" />
-
-                  <a href="/members/delete/{{ user.member_id }}/" onclick="return confirm('Are you sure you want to delete this? This will permanently delete the record!')"><button class="btn btn-danger float-right" style="margin-top: 32px; margin-left: 20px">Delete Account</button></a>
+                </div>
+                <div class="form-group col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                  <button class="btn btn-danger float-right" style="margin-top: 32px; margin-left: 20px"><a href="{% url 'delete_member' user.member_id %}">Delete Account</a></button>
                 </div>
               </div>
             </form>
