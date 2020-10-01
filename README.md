@@ -42,6 +42,8 @@ A simple gym member manager to keep a track of all payments and members
 
 
 ### Built with ♥ and :coffee: by [`Omkar Pathak`](http://www.omkarpathak.in/)
+A decent tutorial to begint 
+https://www.youtube.com/watch?v=JT80XhYJdBw
 
 # Donation
 
